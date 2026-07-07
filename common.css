@@ -1,0 +1,271 @@
+/* ============================================================
+   こどもまつり2026 共通スタイルシート
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+:root {
+  --red:    #d41c1c;
+  --red2:   #a01010;
+  --orange: #f97316;
+  --yellow: #fbbf24;
+  --navy:   #1d3461;
+  --navy2:  #0f1f3d;
+  --white:  #ffffff;
+  --cream:  #fffbf0;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  background: var(--cream);
+  color: #222;
+  overflow-x: hidden;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { text-decoration: none; color: inherit; }
+
+/* ===== 緊急バナー ===== */
+#notice-banner {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 13px 20px;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-bottom: 4px solid var(--yellow);
+  display: none;
+}
+#notice-banner .ntxt { color: var(--yellow); }
+#notice-banner a { color: #7dd3fc; text-decoration: underline; }
+
+/* ===== ヘッダー ===== */
+header {
+  background: var(--navy2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.4);
+}
+.header-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+.header-logo {
+  color: var(--yellow);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-shadow: 2px 2px 0 var(--red);
+  line-height: 1.2;
+}
+.header-logo small {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.68rem;
+  font-weight: 400;
+  display: block;
+}
+
+/* ===== グローバルナビ ===== */
+.global-nav { display: flex; gap: 4px; }
+.global-nav a {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.global-nav a:hover,
+.global-nav a.active {
+  background: var(--red);
+  color: #fff;
+}
+
+/* ===== ページヒーロー（各ページ上部帯） ===== */
+.page-hero {
+  background: var(--red);
+  background-image: repeating-conic-gradient(
+    from 0deg at 50% 60%,
+    rgba(255,200,0,0.05) 0deg 10deg,
+    transparent 10deg 20deg
+  );
+  padding: 56px 24px 52px;
+  text-align: center;
+  color: #fff;
+}
+.page-hero h1 {
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  font-weight: 900;
+  text-shadow: 4px 4px 0 var(--navy2);
+  margin-bottom: 10px;
+}
+.page-hero p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* ===== 共通セクション ===== */
+.section { padding: 72px 24px; }
+.section-alt { background: #fff; }
+.container { max-width: 1000px; margin: 0 auto; }
+.section-head { text-align: center; margin-bottom: 52px; }
+.section-label {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.15em;
+  padding: 5px 16px;
+  border-radius: 4px;
+  border: 2px solid var(--navy2);
+  box-shadow: 3px 3px 0 var(--navy2);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 900;
+  color: var(--navy2);
+  line-height: 1.3;
+}
+.section-title span { color: var(--red); }
+
+/* ===== ボタン ===== */
+.btn-main {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--navy2);
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 14px 36px;
+  border-radius: 50px;
+  border: 3px solid var(--navy2);
+  box-shadow: 5px 5px 0 var(--navy2);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-main:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--navy2); }
+.btn-navy {
+  display: inline-block;
+  background: var(--navy2);
+  color: var(--yellow);
+  font-weight: 900;
+  font-size: 1rem;
+  padding: 14px 36px;
+  border-radius: 50px;
+  border: 3px solid var(--navy2);
+  box-shadow: 5px 5px 0 var(--red);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-navy:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--red); }
+
+/* ===== カード共通 ===== */
+.card {
+  background: var(--white);
+  border: 3px solid var(--navy2);
+  border-radius: 16px;
+  box-shadow: 5px 5px 0 var(--navy2);
+  overflow: hidden;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--navy2); }
+
+/* ===== フッター ===== */
+footer {
+  background: var(--navy2);
+  color: rgba(255,255,255,0.65);
+  padding: 40px 24px 24px;
+  text-align: center;
+}
+.footer-logo {
+  color: var(--yellow);
+  font-size: 1.2rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 0 var(--red);
+}
+footer p { font-size: 0.82rem; line-height: 1.9; }
+.footer-nav {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.footer-nav a {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.82rem;
+  transition: color 0.2s;
+}
+.footer-nav a:hover { color: var(--yellow); }
+.footer-copy {
+  margin-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 16px;
+  font-size: 0.75rem;
+}
+
+/* ===== レスポンシブ ===== */
+@media (max-width: 768px) {
+  .section { padding: 40px 16px; }
+  .section-head { margin-bottom: 28px; }
+  .page-hero { padding: 36px 16px 32px; }
+  .page-hero h1 { font-size: 1.6rem; }
+  .page-hero p { font-size: 0.85rem; }
+  .container { padding: 0; }
+  .btn-main { font-size: 0.9rem; padding: 12px 28px; }
+  .global-nav {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: var(--navy2);
+    flex-direction: column;
+    gap: 0;
+    padding: 8px 0 16px;
+    border-top: 3px solid var(--red);
+    z-index: 99;
+  }
+  .global-nav.open { display: flex; }
+  .global-nav a {
+    padding: 14px 28px;
+    font-size: 1rem;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .mobile-menu-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  }
+  .mobile-menu-btn span {
+    display: block;
+    width: 26px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: transform 0.2s, opacity 0.2s;
+  }
+  .mobile-menu-btn.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .mobile-menu-btn.active span:nth-child(2) { opacity: 0; }
+  .mobile-menu-btn.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+}
+@media (min-width: 769px) {
+  .mobile-menu-btn { display: none; }
+}
+
+/* ===== 台風ステータス ===== */
+.status-open   { background:#dcfce7; color:#166534; font-weight:700; padding:4px 14px; border-radius:20px; font-size:0.85rem; }
+.status-cancel { background:#fee2e2; color:#991b1b; font-weight:700; padding:4px 14px; border-radius:20px; font-size:0.85rem; }
+.status-delay  { background:#fef3c7; color:#92400e; font-weight:700; padding:4px 14px; border-radius:20px; font-size:0.85rem; }

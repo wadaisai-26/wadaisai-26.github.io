@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キッチンカー招致許可申請 — こどもまつり2026</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+      background: #1a1a2e;
+      color: #333;
+    }
+
+    /* ナビゲーション */
+    .nav {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 100;
+    }
+    .nav button {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.6);
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav button.active { background: #fff; }
+
+    .prev-btn, .next-btn {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: white;
+      font-size: 28px;
+      width: 48px; height: 72px;
+      cursor: pointer;
+      border-radius: 6px;
+      z-index: 100;
+      transition: background 0.2s;
+    }
+    .prev-btn:hover, .next-btn:hover { background: rgba(255,255,255,0.3); }
+    .prev-btn { left: 12px; }
+    .next-btn { right: 12px; }
+
+    .slide-counter {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      z-index: 100;
+    }
+
+    /* スライド共通 */
+    .slide {
+      display: none;
+      width: 100vw;
+      min-height: 100vh;
+      padding: 60px 80px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .slide.active { display: flex; }
+
+    /* ========== スライド1：表紙 ========== */
+    #s1 {
+      background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #0f3460 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    #s1::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: rgba(230,57,70,0.12);
+      top: -150px; right: -150px;
+    }
+    #s1::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(255,189,89,0.1);
+      bottom: -80px; left: -80px;
+    }
+    .s1-tag {
+      background: #e63946;
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+    }
+    .s1-title {
+      color: white;
+      font-size: 42px;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+    .s1-title span { color: #ffbd59; }
+    .s1-sub {
+      color: rgba(255,255,255,0.7);
+      font-size: 18px;
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .s1-meta {
+      display: flex;
+      gap: 40px;
+      color: rgba(255,255,255,0.55);
+      font-size: 14px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: 28px;
+    }
+    .s1-meta span { display: flex; align-items: center; gap: 8px; }
+
+    /* ========== スライド2：なぜキッチンカーが必要か ========== */
+    #s2 { background: #fafafa; }
+
+    .slide-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .slide-header .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #e63946;
+      margin-bottom: 10px;
+    }
+    .slide-header h2 {
+      font-size: 34px;
+      font-weight: 900;
+      color: #1a1a2e;
+    }
+
+    .reason-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .reason-card {
+      background: white;
+      border-radius: 16px;
+      padding: 36px 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      border-top: 4px solid #e63946;
+    }
+    .reason-card.blue { border-top-color: #0f3460; }
+    .reason-card .icon { font-size: 40px; margin-bottom: 16px; }
+    .reason-card h3 { font-size: 20px; font-weight: 800; color: #1a1a2e; margin-bottom: 10px; }
+    .reason-card p { font-size: 15px; color: #555; line-height: 1.8; }
+    .reason-card .highlight {
+      display: inline-block;
+      background: #fff3cd;
+      color: #856404;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-top: 12px;
+    }
+    .reason-card.blue .highlight {
+      background: #e8f0fe;
+      color: #1a73e8;
+    }
+
+    /* ========== スライド3：モビマル信頼性 ========== */
+    #s3 { background: linear-gradient(160deg, #0f3460 0%, #1e4d8c 100%); }
+
+    .trust-header { text-align: center; margin-bottom: 48px; }
+    .trust-header .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 3px; color: #ffbd59; margin-bottom: 10px; }
+    .trust-header h2 { font-size: 34px; font-weight: 900; color: white; }
+
+    .stats-row {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 36px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .stat-box {
+      flex: 1;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      padding: 28px 20px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+    .stat-box .num {
+      font-size: 44px;
+      font-weight: 900;
+      color: #ffbd59;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-box .label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 600;
+    }
+
+    .trust-badges {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .badge {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .badge .badge-icon { font-size: 28px; }
+    .badge .badge-text { color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.5; }
+    .badge .badge-text strong { color: white; display: block; font-size: 15px; margin-bottom: 2px; }
+
+    /* ========== スライド4：許可証 ========== */
+    #s4 { background: #fafafa; }
+
+    .permit-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+      width: 100%;
+      max-width: 960px;
+    }
+    .permit-card {
+      background: white;
+      border-radius: 14px;
+      padding: 30px 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      text-align: center;
+    }
+    .permit-card .picon { font-size: 36px; margin-bottom: 14px; }
+    .permit-card h3 { font-size: 16px; font-weight: 800; color: #1a1a2e; margin-bottom: 10px; }
+    .permit-card p { font-size: 13px; color: #666; line-height: 1.7; }
+    .permit-card .issued-by {
+      display: inline-block;
+      margin-top: 14px;
+      background: #f0f4ff;
+      color: #0f3460;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 4px;
+    }
+
+    .liability-note {
+      margin-top: 32px;
+      background: #fff8e1;
+      border-left: 5px solid #ffbd59;
+      border-radius: 8px;
+      padding: 18px 24px;
+      max-width: 960px;
+      width: 100%;
+    }
+    .liability-note strong { color: #1a1a2e; font-size: 15px; }
+    .liability-note p { color: #555; font-size: 14px; margin-top: 6px; line-height: 1.7; }
+
+    /* ========== スライド5：PL保険 ========== */
+    #s5 { background: linear-gradient(160deg, #1a1a2e 0%, #16213e 100%); }
+
+    .pl-header { text-align: center; margin-bottom: 40px; }
+    .pl-header .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 3px; color: #ffbd59; margin-bottom: 10px; }
+    .pl-header h2 { font-size: 34px; font-weight: 900; color: white; }
+
+    .pl-main {
+      display: flex;
+      gap: 28px;
+      width: 100%;
+      max-width: 960px;
+    }
+    .pl-left {
+      flex: 1;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .pl-left h3 { color: #ffbd59; font-size: 18px; font-weight: 800; margin-bottom: 20px; }
+    .pl-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+    .pl-item .check {
+      width: 22px; height: 22px;
+      background: #e63946;
+      border-radius: 50%;
+      color: white;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .pl-item p { color: rgba(255,255,255,0.85); font-size: 14px; line-height: 1.6; }
+    .pl-item p strong { color: white; }
+
+    .pl-right {
+      width: 280px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .pl-amount {
+      background: #e63946;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .pl-amount .label { color: rgba(255,255,255,0.8); font-size: 13px; margin-bottom: 8px; }
+    .pl-amount .amount { color: white; font-size: 42px; font-weight: 900; line-height: 1; }
+    .pl-amount .unit { color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 4px; }
+
+    .pl-univ-box {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      padding: 22px;
+      flex: 1;
+    }
+    .pl-univ-box .univ-label { color: #ffbd59; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+    .pl-univ-box p { color: rgba(255,255,255,0.8); font-size: 13px; line-height: 1.7; }
+
+    /* ========== スライド6：まとめ ========== */
+    #s6 { background: linear-gradient(135deg, #0f3460 0%, #e63946 100%); }
+
+    .summary-title { color: white; font-size: 38px; font-weight: 900; text-align: center; margin-bottom: 12px; }
+    .summary-sub { color: rgba(255,255,255,0.75); font-size: 16px; text-align: center; margin-bottom: 48px; }
+
+    .summary-list {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+    .summary-item {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      backdrop-filter: blur(8px);
+    }
+    .summary-item .snum {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: white;
+      color: #0f3460;
+      font-size: 16px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .summary-item p { color: white; font-size: 15px; line-height: 1.6; }
+    .summary-item p strong { font-size: 16px; display: block; margin-bottom: 2px; }
+
+    .request-box {
+      background: white;
+      border-radius: 16px;
+      padding: 28px 40px;
+      text-align: center;
+      max-width: 560px;
+    }
+    .request-box p { font-size: 13px; color: #777; margin-bottom: 10px; }
+    .request-box h3 { font-size: 22px; font-weight: 900; color: #0f3460; }
+  </style>
+</head>
+<body>
+
+<!-- ========== SLIDE 1: 表紙 ========== -->
+<div class="slide active" id="s1">
+  <div class="s1-tag">許可申請資料 2026</div>
+  <h1 class="s1-title">
+    こどもまつり2026<br>
+    <span>キッチンカー招致</span>のご承認依頼
+  </h1>
+  <p class="s1-sub">安全・安心なフードサービスの導入について</p>
+  <div class="s1-meta">
+    <span>📅 開催予定：2026年度</span>
+    <span>🏫 主催：&#9312;&#9313;&#9314;大学 こどもまつり実行委員会</span>
+    <span>📋 資料作成：実行委員会</span>
+  </div>
+</div>
+
+<!-- ========== SLIDE 2: なぜキッチンカーが必要か ========== -->
+<div class="slide" id="s2">
+  <div class="slide-header">
+    <div class="eyebrow">REASON</div>
+    <h2>なぜキッチンカーが必要か</h2>
+  </div>
+  <div class="reason-grid">
+    <div class="reason-card">
+      <div class="icon">🌞</div>
+      <h3>熱中症リスクへの対応</h3>
+      <p>
+        こどもまつりは屋外・夏季開催のため、長時間の活動により子どもたちの<strong>熱中症リスクが高まります</strong>。
+        現状、昼食を提供できる場所が大学内にないため、参加者が学外へ出る必要があり、
+        炎天下での移動が危険を招きます。
+      </p>
+      <span class="highlight">⚠ 食事・水分補給の場を確保することが安全管理上の急務です</span>
+    </div>
+    <div class="reason-card blue">
+      <div class="icon">🎪</div>
+      <h3>来場者の滞在促進</h3>
+      <p>
+        昼食場所がないことで、来場者が昼をはさんで<strong>一時退場・早退してしまう</strong>問題があります。
+        キッチンカーの設置により会場内で食事・休憩できる環境を作り、
+        イベントを通じた体験の充実と来場者満足度の向上を図ります。
+      </p>
+      <span class="highlight blue">✓ 来場者の滞在時間延長 → イベント全体の活性化</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 3: モビマルの信頼性 ========== -->
+<div class="slide" id="s3">
+  <div class="trust-header">
+    <div class="eyebrow">TRUST & SCALE</div>
+    <h2 style="color:white;">利用するサービス「モビマル」の<br>信頼性・規模</h2>
+  </div>
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="num">16,000<span style="font-size:24px;">件+</span></div>
+      <div class="label">イベント派遣実績</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">5,400<span style="font-size:24px;">台+</span></div>
+      <div class="label">登録キッチンカー数</div>
+    </div>
+    <div class="stat-box">
+      <div class="num">No.1</div>
+      <div class="label">掲載台数<br><span style="font-size:11px;">主要マッチングサイト6社中</span></div>
+    </div>
+  </div>
+  <div class="trust-badges">
+    <div class="badge">
+      <div class="badge-icon">📈</div>
+      <div class="badge-text">
+        <strong>東証プライム上場企業が運営</strong>
+        株式会社シンクロ・フードが事業運営。財務・コンプライアンス体制が整備された信頼ある運営母体。
+      </div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🏛</div>
+      <div class="badge-text">
+        <strong>一般社団法人 日本移動販売協会</strong>
+        2019年設立の業界団体が後援。業界標準の衛生・安全基準を推進。
+      </div>
+    </div>
+    <div class="badge">
+      <div class="badge-icon">🔍</div>
+      <div class="badge-text">
+        <strong>審査済みの事業者のみ登録</strong>
+        許可証・保険加入を確認した事業者がマッチングされるため、
+        素性不明の業者が入ることがない仕組み。
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 4: 許可証の概要 ========== -->
+<div class="slide" id="s4">
+  <div class="slide-header">
+    <div class="eyebrow">PERMITS</div>
+    <h2>キッチンカー事業者が取得する許可証</h2>
+  </div>
+  <div class="permit-grid">
+    <div class="permit-card">
+      <div class="picon">📄</div>
+      <h3>食品営業許可証</h3>
+      <p>
+        食品衛生法に基づき、各都道府県の<strong>保健所</strong>が発行。
+        調理設備・衛生設備が基準を満たすと認定された車両のみ取得可能。
+        <strong>当日は必ず原本を携帯・掲示</strong>します。
+      </p>
+      <span class="issued-by">発行：都道府県保健所</span>
+    </div>
+    <div class="permit-card">
+      <div class="picon">🧑‍🍳</div>
+      <h3>食品衛生責任者</h3>
+      <p>
+        各営業車に<strong>1名以上の有資格者配置</strong>が義務付けられています。
+        食品衛生に関する知識と管理責任を持った人員が常駐し、当日の衛生管理を担います。
+      </p>
+      <span class="issued-by">修了証：食品衛生協会</span>
+    </div>
+    <div class="permit-card">
+      <div class="picon">✅</div>
+      <h3>HACCP準拠の衛生管理</h3>
+      <p>
+        2021年6月より<strong>全食品事業者に義務化</strong>されたHACCPに基づく衛生管理を実施。
+        仕入れ・調理・提供の各工程で危害リスクを分析・管理します。
+      </p>
+      <span class="issued-by">根拠：改正食品衛生法</span>
+    </div>
+  </div>
+  <div class="liability-note">
+    <strong>⚖ 法的責任の所在について</strong>
+    <p>
+      食品衛生法上、食中毒などの事故が発生した場合の<strong>営業上の責任は、許可を受けたキッチンカー事業者が負います</strong>。
+      大学は食品を製造・販売する立場ではなく、場所を提供するにとどまるため、
+      食中毒に関する直接的な法的責任を負う立場にはありません。
+    </p>
+  </div>
+</div>
+
+<!-- ========== SLIDE 5: PL保険 ========== -->
+<div class="slide" id="s5">
+  <div class="pl-header">
+    <div class="eyebrow">PL INSURANCE</div>
+    <h2>PL保険（製造物責任保険）の概要</h2>
+  </div>
+  <div class="pl-main">
+    <div class="pl-left">
+      <h3>補償対象となる事故</h3>
+      <div class="pl-item">
+        <div class="check">✓</div>
+        <p><strong>食中毒</strong><br>販売した飲食物による食中毒発症時の治療費・入院費・休業損害・慰謝料</p>
+      </div>
+      <div class="pl-item">
+        <div class="check">✓</div>
+        <p><strong>異物混入による健康被害</strong><br>ドリンク・食品への異物混入による歯欠損などの身体的損害</p>
+      </div>
+      <div class="pl-item">
+        <div class="check">✓</div>
+        <p><strong>物損事故</strong><br>提供時の飲料こぼし等による衣類・所持品への損害</p>
+      </div>
+      <div class="pl-item">
+        <div class="check">✓</div>
+        <p><strong>施設賠償責任保険（セット）</strong><br>看板落下など設備由来の事故による来場者のケガ</p>
+      </div>
+    </div>
+    <div class="pl-right">
+      <div class="pl-amount">
+        <div class="label">モビマル加入の補償上限額</div>
+        <div class="amount">3億円</div>
+        <div class="unit">（PL保険 ＋ 施設賠償責任保険）</div>
+      </div>
+      <div class="pl-univ-box">
+        <div class="univ-label">🏫 大学への影響について</div>
+        <p>
+          PL保険は<strong>キッチンカー事業者が加入・負担</strong>するものです。
+          万一の事故も事業者の保険で対応されるため、
+          大学が賠償責任を肩代わりする状況は生じません。
+          事前に保険証書のコピーを提出いただくことで書面での確認も可能です。
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 6: まとめ ========== -->
+<div class="slide" id="s6">
+  <h2 class="summary-title">まとめ・ご承認のお願い</h2>
+  <p class="summary-sub">以上の点から、安全・安心なキッチンカー招致の実現をお願い申し上げます</p>
+  <div class="summary-list">
+    <div class="summary-item">
+      <div class="snum">1</div>
+      <p>
+        <strong>必要性：熱中症対策と来場者サービス</strong>
+        昼食場所の確保は子どもたちの安全管理上の急務であり、滞在促進によるイベント充実にも貢献します
+      </p>
+    </div>
+    <div class="summary-item">
+      <div class="snum">2</div>
+      <p>
+        <strong>信頼性：東証プライム上場企業運営・実績16,000件超</strong>
+        モビマルは業界最大規模のマッチングサービスであり、審査済み事業者のみが登録されています
+      </p>
+    </div>
+    <div class="summary-item">
+      <div class="snum">3</div>
+      <p>
+        <strong>安全管理：法的許可証・HACCP・最大3億円のPL保険</strong>
+        食品営業許可証・食品衛生責任者・PL保険はすべてキッチンカー事業者が取得・加入しており、食中毒等の法的責任は事業者が負います
+      </p>
+    </div>
+    <div class="summary-item">
+      <div class="snum">4</div>
+      <p>
+        <strong>大学の責任範囲：場所の提供に限定</strong>
+        大学は食品の製造・販売主体ではないため、食品衛生法上の直接的責任は生じません。事業者との覚書締結で責任関係を明文化します
+      </p>
+    </div>
+  </div>
+  <div class="request-box">
+    <p>以上をご確認いただきますよう、よろしくお願い申し上げます</p>
+    <h3>キッチンカー招致のご承認をお願いします 🙏</h3>
+  </div>
+</div>
+
+<!-- ナビゲーション -->
+<button class="prev-btn" onclick="changeSlide(-1)">&#8249;</button>
+<button class="next-btn" onclick="changeSlide(1)">&#8250;</button>
+<div class="slide-counter" id="counter">1 / 6</div>
+<div class="nav" id="nav"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let current = 0;
+
+  const nav = document.getElementById('nav');
+  slides.forEach((_, i) => {
+    const btn = document.createElement('button');
+    if (i === 0) btn.classList.add('active');
+    btn.onclick = () => goTo(i);
+    nav.appendChild(btn);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    nav.children[current].classList.remove('active');
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    nav.children[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  function changeSlide(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') changeSlide(-1);
+  });
+</script>
+
+</body>
+</html>

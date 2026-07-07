@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事前申請 | こどもまつり2026</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .apply-layout { display: grid; grid-template-columns: 1fr 1.7fr; gap: 40px; align-items: start; }
+    .merit-list { display: flex; flex-direction: column; gap: 16px; }
+    .merit-card {
+      background: var(--cream); border: 3px solid var(--navy2); border-radius: 14px;
+      padding: 18px 20px; display: flex; gap: 14px; align-items: flex-start;
+      box-shadow: 4px 4px 0 var(--navy2);
+    }
+    .merit-num {
+      background: var(--red); color: #fff; font-weight: 900; font-size: 0.85rem;
+      min-width: 30px; height: 30px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid var(--navy2); flex-shrink: 0;
+    }
+    .merit-title { font-size: 0.95rem; font-weight: 700; color: var(--navy2); margin-bottom: 4px; }
+    .merit-desc { font-size: 0.83rem; color: #666; line-height: 1.6; }
+
+    /* 参加条件ボックス */
+    .condition-box {
+      background: #fff8e1; border: 3px solid var(--yellow); border-radius: 14px;
+      padding: 20px 22px; box-shadow: 4px 4px 0 #f59e0b; margin-top: 20px;
+    }
+    .condition-box h3 { font-size: 0.95rem; font-weight: 900; color: var(--navy2); margin-bottom: 10px; }
+    .condition-box ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .condition-box li { font-size: 0.85rem; color: #555; padding-left: 1.3em; position: relative; line-height: 1.6; }
+    .condition-box li::before { content: "▸"; color: var(--red); position: absolute; left: 0; font-weight: 700; }
+
+    /* フォーム */
+    .form-card {
+      background: #fff; border: 3px solid var(--navy2); border-radius: 20px;
+      padding: 36px 32px; box-shadow: 6px 6px 0 var(--navy2);
+    }
+    .form-card h2 {
+      font-size: 1.15rem; font-weight: 900; color: var(--navy2);
+      margin-bottom: 22px; padding-bottom: 12px; border-bottom: 3px solid var(--yellow);
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.87rem; font-weight: 700; color: var(--navy2); margin-bottom: 6px; }
+    .required { background: var(--red); color: #fff; font-size: 0.68rem; padding: 1px 6px; border-radius: 4px; margin-left: 6px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 11px 14px; border: 2px solid #d1d5db; border-radius: 10px;
+      font-size: 0.93rem; font-family: inherit; color: #333; background: #fafafa;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--red); background: #fff;
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .radio-group, .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+    .radio-group label, .checkbox-group label {
+      display: flex; align-items: center; gap: 6px;
+      font-weight: 400; cursor: pointer; font-size: 0.88rem;
+    }
+    .radio-group input, .checkbox-group input { width: auto; }
+    .submit-btn {
+      width: 100%; background: var(--red); color: #fff; font-size: 1.05rem;
+      font-weight: 900; padding: 15px; border: 3px solid var(--navy2); border-radius: 50px;
+      cursor: pointer; box-shadow: 5px 5px 0 var(--navy2);
+      transition: transform 0.15s, box-shadow 0.15s; font-family: inherit; margin-top: 8px;
+    }
+    .submit-btn:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--navy2); }
+    .form-note { font-size: 0.76rem; color: #999; margin-top: 10px; text-align: center; line-height: 1.8; }
+    #form-success { display: none; text-align: center; padding: 40px 20px; }
+    #form-success .si { font-size: 3.5rem; margin-bottom: 14px; }
+    #form-success h3 { font-size: 1.3rem; font-weight: 900; color: var(--navy2); margin-bottom: 10px; }
+    #form-success p { color: #666; font-size: 0.9rem; line-height: 1.8; }
+
+    @media(max-width:768px){ .apply-layout{grid-template-columns:1fr;} .form-row{grid-template-columns:1fr;} }
+  </style>
+</head>
+<body>
+
+  <div id="notice-banner" style="display:none">
+    <span class="ntxt">⚠️【重要】</span> 台風接近のため開催状況が変更されました。
+    <a href="index.html#typhoon">詳細はこちら</a>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">こどもまつり2026<small>和歌山大学 大学祭実行委員会</small></a>
+      <nav class="global-nav">
+        <a href="index.html">開催概要</a><a href="program.html">企画説明</a>
+        <a href="access.html">アクセス</a><a href="apply.html" class="active">事前申請</a>
+        <a href="contact.html">お問い合わせ</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="メニュー"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>📝 事前申請</h1>
+    <p>事前申請で当日の受付がスムーズになります。ぜひご登録ください（任意）</p>
+  </div>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="apply-layout">
+
+        <div>
+          <div class="section-head" style="text-align:left;margin-bottom:24px">
+            <div class="section-label">WHY APPLY?</div>
+            <h2 class="section-title">事前申請の<span>メリット</span></h2>
+          </div>
+          <div class="merit-list">
+            <div class="merit-card">
+              <div class="merit-num">1</div>
+              <div>
+                <div class="merit-title">⏩ 当日受付がスムーズ</div>
+                <div class="merit-desc">申請後に発行される整理番号を受付でお見せいただくと、優先的にご案内できます。</div>
+              </div>
+            </div>
+            <div class="merit-card">
+              <div class="merit-num">2</div>
+              <div>
+                <div class="merit-title">📧 台風情報をいち早くお届け</div>
+                <div class="merit-desc">悪天候による開催変更情報を、登録メールアドレスに直接お知らせします。</div>
+              </div>
+            </div>
+            <div class="merit-card">
+              <div class="merit-num">3</div>
+              <div>
+                <div class="merit-title">🚗 車での来場が可能に</div>
+                <div class="merit-desc">車来場を希望される方は、事前申請が必須です。申請なしの場合は公共交通機関をご利用ください。</div>
+              </div>
+            </div>
+            <div class="merit-card">
+              <div class="merit-num">4</div>
+              <div>
+                <div class="merit-title">🚑 緊急時の迅速な対応</div>
+                <div class="merit-desc">お子様に万が一のことがあった際、登録の緊急連絡先に迅速にご連絡できます。</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="condition-box">
+            <h3>📌 小学4〜6年生の保護者なし参加について</h3>
+            <ul>
+              <li>フォームに必要事項を記入した小学4〜6年生は、保護者なしでの参加が可能です。</li>
+              <li>学校名・学年・氏名・緊急連絡先の入力が必須です。</li>
+              <li>小学1〜3年生・未就学児は保護者の同伴が必要です。</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- フォーム -->
+        <div class="form-card">
+          <h2>🖊️ 参加申請フォーム</h2>
+          <p style="font-size:0.92rem;color:#555;line-height:1.8;margin-bottom:24px">
+            下のボタンからGoogleフォームを開いて申請してください。<br>
+            スマートフォン・パソコンどちらからでもご利用いただけます。
+          </p>
+          <a href="https://forms.gle/WDsbrTQE8F4vtDiTA"
+             target="_blank" rel="noopener" class="submit-btn"
+             style="display:block;text-align:center;text-decoration:none;">
+            🎉 申請フォームを開く
+          </a>
+          <p class="form-note">
+            ※申請後、整理番号をメールでお送りします。当日受付でご提示ください。<br>
+            ※当日申請も受付にて紙の用紙で対応可能です。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">こどもまつり2026</div>
+    <p>和歌山大学 大学祭実行委員会<br>〒640-8510 和歌山県和歌山市栄谷930</p>
+    <div class="footer-nav">
+      <a href="index.html">開催概要</a><a href="program.html">企画説明</a>
+      <a href="access.html">アクセス</a><a href="apply.html">事前申請</a>
+      <a href="contact.html">お問い合わせ</a>
+    </div>
+    <p class="footer-copy">Copyright &copy; 2026 和歌山大学 大学祭実行委員会 All Rights Reserved.</p>
+  </footer>
+
+  <script src="common.js"></script>
+</body>
+</html>

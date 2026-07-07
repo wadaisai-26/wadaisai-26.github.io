@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>開催概要 | こどもまつり2026</title>
+  <meta name="description" content="和歌山大学大学祭実行委員会主催。地域の小学生を招いたこどもまつり2026。2026年8月2日（日）開催！">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .hero {
+      background: url('summer_hero.jpg') center center / cover no-repeat;
+      padding: 96px 24px 100px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg,
+        rgba(15,31,61,0.60) 0%,
+        rgba(20,100,200,0.28) 55%,
+        rgba(15,31,61,0.68) 100%);
+      z-index: 0;
+    }
+    .hero > * { position: relative; z-index: 1; }
+    @media (max-width: 768px) {
+      .hero {
+        padding: 72px 24px 80px;
+      }
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--navy);
+      color: var(--yellow);
+      font-size: 1rem;
+      font-weight: 900;
+      padding: 8px 28px;
+      border-radius: 50px;
+      border: 3px solid var(--yellow);
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      margin-bottom: 24px;
+      letter-spacing: 0.1em;
+    }
+    .hero h1 {
+      font-size: clamp(3rem, 10vw, 6.5rem);
+      font-weight: 900;
+      color: #fff;
+      line-height: 1;
+      text-shadow: 6px 6px 0 var(--navy2);
+      margin-bottom: 10px;
+    }
+    .hero h1 em {
+      color: var(--yellow);
+      font-style: normal;
+      font-size: clamp(1.4rem, 4vw, 2.8rem);
+      display: block;
+      text-shadow: 3px 3px 0 var(--navy2);
+    }
+    .hero-sub {
+      color: #fff;
+      font-size: clamp(0.95rem, 2.5vw, 1.2rem);
+      font-weight: 700;
+      max-width: 580px;
+      margin: 20px auto 40px;
+      line-height: 1.8;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9), 0 0 24px rgba(0,0,0,0.8);
+    }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* 概要グリッド */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .info-card {
+      background: var(--cream);
+      border: 3px solid var(--navy2);
+      border-radius: 16px;
+      padding: 26px 16px;
+      text-align: center;
+      box-shadow: 5px 5px 0 var(--navy2);
+      transition: transform 0.15s;
+    }
+    .info-card:hover { transform: translate(-2px,-2px); }
+    .info-icon { font-size: 2.2rem; margin-bottom: 10px; }
+    .info-label { font-size: 0.72rem; font-weight: 700; color: var(--red); letter-spacing: 0.1em; margin-bottom: 6px; }
+    .info-value { font-size: 0.97rem; font-weight: 700; color: var(--navy2); line-height: 1.6; }
+
+    /* 保護者ルール・汎用ルールボックス */
+    .rule-box {
+      background: #fff8e1;
+      border: 3px solid var(--yellow);
+      border-radius: 16px;
+      padding: 28px 28px;
+      box-shadow: 5px 5px 0 #f59e0b;
+      margin-bottom: 0;
+    }
+    .rule-box h3 {
+      font-size: 1rem;
+      font-weight: 900;
+      color: var(--navy2);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rule-box ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .rule-box li {
+      font-size: 0.9rem;
+      padding-left: 1.4em;
+      position: relative;
+      line-height: 1.7;
+      color: #444;
+    }
+    .rule-box li::before { content: "▸"; color: var(--red); position: absolute; left: 0; font-weight: 700; }
+
+    /* 台風情報 */
+    .typhoon-block {
+      background: #fff8e1;
+      border: 4px solid var(--yellow);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 6px 6px 0 #f59e0b;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .typhoon-block h2 {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--navy2);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .typhoon-table { width: 100%; border-collapse: collapse; }
+    .typhoon-table tr { border-bottom: 1px solid #e5e7eb; }
+    .typhoon-table th { background: var(--navy2); color: var(--yellow); padding: 10px 16px; text-align: left; font-size: 0.85rem; width: 38%; }
+    .typhoon-table td { padding: 10px 16px; font-size: 0.9rem; }
+    .typhoon-detail {
+      background: #fef3c7;
+      border-left: 4px solid var(--orange);
+      padding: 14px 18px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 14px;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      display: none; /* ← 台風時: block */
+    }
+
+    /* FAQ */
+    .faq-list { display: flex; flex-direction: column; gap: 12px; }
+    .faq-item { background: #fff; border: 3px solid var(--navy2); border-radius: 14px; box-shadow: 4px 4px 0 var(--navy2); }
+    .faq-q { padding: 16px 20px; font-weight: 700; font-size: 0.95rem; color: var(--navy2); display: flex; align-items: center; gap: 10px; }
+    .faq-q::before { content: "Q"; background: var(--red); color: #fff; min-width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 900; border: 2px solid var(--navy2); }
+    .faq-a { padding: 0 20px 16px 58px; font-size: 0.88rem; color: #555; line-height: 1.8; }
+
+    /* 受付場所 */
+    .reception-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .reception-card {
+      background: #fff;
+      border: 3px solid var(--navy2);
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 5px 5px 0 var(--navy2);
+    }
+    .reception-card .rc-icon { font-size: 2rem; margin-bottom: 8px; }
+    .reception-card h3 { font-size: 0.82rem; font-weight: 900; color: var(--navy2); margin-bottom: 8px; white-space: nowrap; }
+    .reception-card p { font-size: 0.85rem; color: #666; line-height: 1.6; }
+
+    /* ===== 企画カード（index.html 埋め込み用） ===== */
+    .program-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .program-card {
+      background: #fff;
+      border: 3px solid var(--navy2);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 6px 6px 0 var(--navy2);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .program-card:hover { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 var(--navy2); }
+    .ph { padding: 18px 20px; color: #fff; display: flex; align-items: center; gap: 12px; }
+    .program-card:nth-child(1) .ph { background: #e53e3e; }
+    .program-card:nth-child(2) .ph { background: #d97706; }
+    .program-card:nth-child(3) .ph { background: #2b6cb0; }
+    .program-card:nth-child(4) .ph { background: #553c9a; }
+    .program-card:nth-child(5) .ph { background: #2f855a; }
+    .program-card:nth-child(6) .ph { background: #0987a0; }
+    .program-card:nth-child(7) .ph { background: #c05621; }
+    .program-card:nth-child(8) .ph { background: #b7791f; }
+    .program-card:nth-child(9) .ph { background: #b83280; }
+    .ph-section { font-size: 0.68rem; opacity: 0.85; margin-bottom: 2px; letter-spacing: 0.05em; }
+    .ph h3 { font-size: 0.97rem; font-weight: 900; line-height: 1.35; }
+    .pc-img img { width: 100%; height: 175px; object-fit: cover; display: block; }
+    .pb { padding: 16px 20px; }
+    .pb p { font-size: 0.88rem; color: #555; line-height: 1.8; }
+    .program-card.special { border-color: var(--red); }
+    .program-card.special .ph { background: linear-gradient(135deg, #b83280, #e53e3e) !important; }
+
+    /* 事前申請CTA */
+    .apply-cta {
+      background: linear-gradient(135deg, #0f1f3d 0%, #1a4080 100%);
+      text-align: center;
+      padding: 72px 24px;
+    }
+    .apply-cta-inner { max-width: 560px; margin: 0 auto; }
+
+    @media(max-width:768px){
+      .reception-grid{ grid-template-columns:1fr 1fr; }
+      .info-grid{ grid-template-columns:repeat(3,1fr); gap:12px; }
+      .info-card{ padding:16px 8px; }
+      .info-icon{ font-size:1.6rem; }
+      .info-value{ font-size:0.82rem; }
+      .info-label{ font-size:0.65rem; }
+      /* 企画カード スマホ: 3列コンパクト */
+      .program-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .program-card { border-radius: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--navy2); display: flex; flex-direction: column; aspect-ratio: 4/5; }
+      .program-card.special { border-color: var(--navy2) !important; }
+      .ph { padding: 6px 8px; gap: 4px; flex-shrink: 0; }
+      .ph-section { font-size: 0.55rem; margin-bottom: 0; }
+      .ph h3 { display: none; }
+      .pc-img { flex: 1; }
+      .pc-img img { width: 100%; height: 100%; object-fit: cover; }
+      .pb { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 台風バナー（台風時: display:none → display:block） -->
+  <div id="notice-banner" style="display:none">
+    <span class="ntxt">⚠️【重要】</span> 台風接近のため開催状況が変更されました。
+    <a href="#typhoon">詳細はこちら</a>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        こどもまつり2026
+        <small>和歌山大学 大学祭実行委員会</small>
+      </a>
+      <nav class="global-nav">
+        <a href="index.html" class="active">開催概要</a>
+        <a href="program.html">企画説明</a>
+        <a href="access.html">アクセス</a>
+        <a href="apply.html">事前申請</a>
+        <a href="contact.html">お問い合わせ</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="メニュー"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <!-- ヒーロー -->
+  <section class="hero">
+    <div class="hero-badge">📅 2026年8月2日（日）開催！</div>
+    <h1>
+      こどもまつり
+      <em>和歌山大学 大学祭実行委員会</em>
+    </h1>
+    <p class="hero-sub">
+      地域の小学生のみんなを和歌山大学に招待！<br>
+      大学生が企画する9つのアトラクションを<br>
+      思いっきり楽しもう！入場無料！
+    </p>
+    <div class="hero-btns">
+      <a href="#programs" class="btn-main">🎪 企画内容を見る</a>
+      <a href="apply.html" class="btn-main" style="background:#fff;">📝 事前申請はこちら</a>
+    </div>
+  </section>
+
+  <!-- 開催概要 -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">EVENT INFO</div>
+        <h2 class="section-title">開催<span>概要</span></h2>
+      </div>
+      <div class="info-grid">
+        <div class="info-card"><div class="info-icon">📅</div><div class="info-label">開催日時</div><div class="info-value">2026年8月2日（日）<br>開場 8:30<br>終了 16:30</div></div>
+        <div class="info-card"><div class="info-icon">📍</div><div class="info-label">会場</div><div class="info-value">和歌山大学<br>栄谷キャンパス</div></div>
+        <div class="info-card"><div class="info-icon">👧</div><div class="info-label">対象</div><div class="info-value">小学生<br>（未就学児は保護者<br>同伴で参加可）</div></div>
+        <div class="info-card"><div class="info-icon">💰</div><div class="info-label">参加費</div><div class="info-value">無料</div></div>
+        <div class="info-card"><div class="info-icon">🎪</div><div class="info-label">企画数</div><div class="info-value">全9企画<br>同時開催！</div></div>
+        <div class="info-card"><div class="info-icon">🎓</div><div class="info-label">主催</div><div class="info-value">和歌山大学<br>大学祭実行委員会</div></div>
+      </div>
+
+      <!-- 保護者同伴ルール -->
+      <div class="rule-box">
+        <h3>👨‍👩‍👧 保護者同伴について</h3>
+        <ul>
+          <li>原則として保護者（18歳以上）の同伴が必要です。</li>
+          <li><strong>小学4〜6年生</strong>は、事前申請フォームに必要事項を記入した場合、保護者なしでの参加が可能です。</li>
+          <li>未就学児・小学1〜3年生は必ず保護者と一緒にご来場ください。</li>
+          <li>保護者の方は基本的に企画への参加はできません（見守りはOKです）。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 企画一覧（同一ページ内） ===== -->
+  <section class="section" id="programs">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">ALL PROGRAMS</div>
+        <h2 class="section-title">企画<span>一覧</span></h2>
+        <p style="font-size:0.9rem;color:#666;margin-top:14px;line-height:1.8">
+          大学生が企画する全9つのアトラクション！全て無料🌻<br>
+          カードをタップして詳細をチェック！
+        </p>
+      </div>
+
+      <div class="program-grid">
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">🎤 企画ライブ局</div>
+              <h3>にこにこどもまつり！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="festival.jpg" alt="企画ライブ局"></div>
+          <div class="pb">
+            <p>大学生によるライブやパフォーマンスで会場を盛り上げよう！一緒に踊ったり歌ったり、みんなで楽しい時間を過ごそう！</p>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">🏮 お祭り屋台局</div>
+              <h3>わっしょい！ハチャメチャお祭り屋台！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="yatai.jpg" alt="お祭り屋台局"></div>
+          <div class="pb">
+            <p>お祭りの屋台気分を味わおう！輪投げやスーパーボールすくいなど、夏祭り定番の遊びが大集合！何ポイント取れるかな？</p>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">⚽ スポーツ局</div>
+              <h3>あつまれ！わちゃわちゃ大運動会！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="sports.jpg" alt="スポーツ局"></div>
+          <div class="pb">
+            <p>ボール投げや運動系のゲームで体を動かそう！思いっきり汗をかいて、スポーツの楽しさを体験しよう！</p>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">🔍 謎解き局</div>
+              <h3>宇宙船から脱出しよう！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="nazotoki.jpg" alt="謎解き局"></div>
+          <div class="pb">
+            <p>謎を解いて宇宙船から脱出せよ！ヒントを集めながら謎に挑戦しよう。友達と協力して全問クリアを目指せ！</p>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">🎈 バルーン局</div>
+              <h3>めざせバルーンマスター！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="balloon.jpg" alt="バルーン局"></div>
+          <div class="pb">
+            <p>風船を使ったアートに挑戦！大学生のお兄さん・お姉さんと一緒に、カラフルなバルーン作品を作ってみよう！</p>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">🔬 自由研究局</div>
+              <h3>まほうのしゅわしゅわバスボムを作ろう！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="basbomb.jpg" alt="自由研究局"></div>
+          <div class="pb">
+            <p>重曹などを使って、入浴剤（バスボム）を手作りしよう！しゅわしゅわと発泡する不思議を体験しながら、世界に一つだけの作品を完成させよう！</p>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">🎎 文化体験局</div>
+              <h3>こまを作ろう！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="koma.jpg" alt="文化体験局"></div>
+          <div class="pb">
+            <p>日本の伝統遊び「こま」を自分でデザインして作ろう！色を塗ったり模様をつけたりして、オリジナルのこまを完成させてね。</p>
+          </div>
+        </div>
+
+        <div class="program-card">
+          <div class="ph">
+            <div class="ph-text">
+              <div class="ph-section">🎲 テーブルゲーム局</div>
+              <h3>わくわくが止まらないテーブルゲーム！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="tablegame.jpg" alt="テーブルゲーム局"></div>
+          <div class="pb">
+            <p>いろんなテーブルゲームをみんなで楽しもう！友達や大学生と一緒に、頭を使ったゲームで盛り上がろう！</p>
+          </div>
+        </div>
+
+        <div class="program-card special">
+          <div class="ph" style="background:linear-gradient(135deg,#0987a0,#2b6cb0)">
+            <div class="ph-text">
+              <div class="ph-section">📷 フォトスポット</div>
+              <h3>顔はめパネルで記念撮影！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="kaohame.jpg" alt="フォトスポット"></div>
+          <div class="pb">
+            <p>こどもまつりオリジナルの顔はめパネルで記念撮影しよう！家族や友達と一緒に、最高の思い出を残してね。もちろん無料！</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 詳細ページへのリンク -->
+      <div style="text-align:center;margin-top:36px">
+        <a href="program.html" class="btn-navy">🗺️ 会場マップ・詳細説明を見る</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 事前申請 CTA ===== -->
+  <section class="apply-cta">
+    <div class="apply-cta-inner">
+      <p style="font-size:clamp(1rem,3vw,1.3rem);font-weight:900;color:var(--yellow);margin-bottom:12px">
+        🎉 気に入った企画はありましたか？
+      </p>
+      <p style="font-size:0.95rem;color:rgba(255,255,255,0.88);margin-bottom:32px;line-height:1.9">
+        当日をスムーズに楽しむために<strong style="color:#fff">事前申請</strong>がおすすめです！<br>
+        小学4〜6年生は申請することで<strong style="color:#fff">保護者なしでの参加</strong>も可能になります。
+      </p>
+      <a href="apply.html" class="btn-main" style="font-size:1.05rem;padding:16px 44px">📝 事前申請はこちら →</a>
+    </div>
+  </section>
+
+  <!-- 受付について -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">RECEPTION</div>
+        <h2 class="section-title">受付<span>場所</span></h2>
+      </div>
+      <div class="reception-grid" style="margin-bottom:48px">
+        <div class="reception-card">
+          <div class="rc-icon">🏛️</div>
+          <h3>受付①<br>大階段下</h3>
+          <p>正門から入ってすぐの大階段下に受付を設置しています。</p>
+        </div>
+        <div class="reception-card">
+          <div class="rc-icon">🏪</div>
+          <h3>受付②<br>デイリーヤマザキ前</h3>
+          <p>構内のデイリーヤマザキ前にも受付を設置しています。</p>
+        </div>
+      </div>
+      <div class="rule-box">
+        <h3>📋 当日受付の流れ</h3>
+        <ul>
+          <li><strong>事前申請済みの方：</strong>申請後にメールで届いた整理番号をスタッフにお見せください。スムーズに受付できます。</li>
+          <li><strong>当日申請の方：</strong>受付にて紙の申請用紙に必要事項をご記入ください。</li>
+          <li>受付時に名前シールをお渡しします。胸元に貼ってご参加ください。</li>
+          <li>退場後に再入場する場合は、再度受付が必要です。</li>
+          <li><strong>退場時刻：16:30までに</strong>大学構内からご退場ください。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 台風・悪天候情報 -->
+  <section class="section" id="typhoon">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label" style="background:#d97706">⚠ 台風・悪天候情報</div>
+        <h2 class="section-title">開催<span>ステータス</span></h2>
+      </div>
+      <div class="typhoon-block">
+        <h2><span>☀️</span>現在の開催ステータス</h2>
+        <table class="typhoon-table">
+          <tr><th>開催日</th><td>2026年8月2日（日）</td></tr>
+          <tr>
+            <th>ステータス</th>
+            <!-- ★ 変更ポイント：中止→status-cancel／延期→status-delay -->
+            <td><span class="status-open">✅ 予定通り開催</span></td>
+          </tr>
+          <tr>
+            <th>最終更新</th>
+            <!-- ★ 変更ポイント：更新日時を書き換えてください -->
+            <td>2026年7月1日 12:00</td>
+          </tr>
+          <tr>
+            <th>備考</th>
+            <!-- ★ 変更ポイント：メッセージを書き換えてください -->
+            <td>現在、台風の接近情報はありません。予定通り開催します。</td>
+          </tr>
+        </table>
+        <!-- ★ 台風詳細（display:none → block で表示） -->
+        <div class="typhoon-detail">
+          <strong>⚠️ 台風接近に伴う対応について</strong><br><br>
+          台風○号の接近に伴い、こどもまつりの開催を中止することになりました。<br>
+          ご参加予定の皆様には大変申し訳ございません。<br><br>
+          ・振替開催：現時点では未定です<br>
+          ・お問い合わせ：zusi@wakayama-u.ac.jp / 080-6382-5562<br><br>
+          今後の情報はこのページおよびInstagram（@wadaisaiunion）にてお知らせします。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- よくある質問 -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">よくある<span>ご質問</span></h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q">参加費はかかりますか？</div>
+          <div class="faq-a">いいえ、参加費は無料です。お気軽にご参加ください。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">小学生だけで参加できますか？</div>
+          <div class="faq-a">小学4〜6年生は、事前申請フォームに必要事項を記入いただければ保護者なしでの参加が可能です。小学1〜3年生・未就学児は保護者の同伴が必要です。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">昼食は用意されていますか？</div>
+          <div class="faq-a">水分は各自ご持参ください。昼食は各自ご持参いただくほか、大学内で営業しているキッチンカー「フルール」さんにご協力いただき、チキンカツ弁当を100食限定（1食450円）でご用意いただけることになりました。数量限定ですので、お早めにお越しください。東1号館103教室を休憩・昼食スペースとして開放しています。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">台風・雨の場合はどうなりますか？</div>
+          <div class="faq-a">このページの「開催ステータス」欄およびInstagram（@wadaisaiunion）にて前日・当日朝に最新情報をお知らせします。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">車で来場できますか？</div>
+          <div class="faq-a">事前申請で車来場を申請された方のみ、車でのご来場が可能です。車いす・ベビーカー等をご利用の方も含め、車でお越しの場合は事前申請が必要です。申請されていない場合は公共交通機関をご利用ください。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">こどもまつり2026</div>
+    <p>和歌山大学 大学祭実行委員会<br>〒640-8510 和歌山県和歌山市栄谷930</p>
+    <div class="footer-nav">
+      <a href="index.html">開催概要</a>
+      <a href="program.html">企画説明</a>
+      <a href="access.html">アクセス</a>
+      <a href="apply.html">事前申請</a>
+      <a href="contact.html">お問い合わせ</a>
+    </div>
+    <p class="footer-copy">Copyright &copy; 2026 和歌山大学 大学祭実行委員会 All Rights Reserved.</p>
+  </footer>
+  <script src="common.js"></script>
+</body>
+</html>

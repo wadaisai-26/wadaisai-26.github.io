@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アクセス | こどもまつり2026</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .access-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      align-items: start;
+    }
+    .map-wrap {
+      border: 3px solid var(--navy2);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 6px 6px 0 var(--navy2);
+      aspect-ratio: 4/3;
+    }
+    .map-wrap iframe { width:100%; height:100%; border:none; display:block; }
+    .access-cards { display: flex; flex-direction: column; gap: 18px; }
+    .access-card {
+      background: var(--cream);
+      border: 3px solid var(--navy2);
+      border-radius: 14px;
+      padding: 18px 22px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      box-shadow: 4px 4px 0 var(--navy2);
+      transition: transform 0.15s;
+    }
+    .access-card:hover { transform: translate(-2px,-2px); }
+    .ac-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .ac-label { font-size: 0.72rem; font-weight: 700; color: var(--red); letter-spacing: 0.08em; margin-bottom: 4px; }
+    .ac-text { font-size: 0.92rem; font-weight: 700; color: var(--navy2); line-height: 1.6; }
+    .ac-note { font-size: 0.8rem; color: #888; margin-top: 4px; }
+
+    /* タイムテーブル */
+    .timetable {
+      width: 100%;
+      border-collapse: collapse;
+      border: 3px solid var(--navy2);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 5px 5px 0 var(--navy2);
+    }
+    .timetable thead th {
+      background: var(--navy2);
+      color: var(--yellow);
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      text-align: center;
+    }
+    .timetable tbody tr { border-bottom: 2px solid #e5e7eb; }
+    .timetable tbody tr:last-child { border-bottom: none; }
+    .timetable tbody td {
+      padding: 12px 16px;
+      font-size: 0.9rem;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .timetable tbody tr:nth-child(even) td { background: #f8fafc; }
+    .time-badge {
+      background: var(--red);
+      color: #fff;
+      font-weight: 700;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      .access-layout { grid-template-columns: 1fr; }
+      .map-wrap { aspect-ratio: 4/3; }
+      .access-card { padding: 14px 16px; gap: 12px; }
+      .ac-text { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="notice-banner" style="display:none">
+    <span class="ntxt">⚠️【重要】</span> 台風接近のため開催状況が変更されました。
+    <a href="index.html#typhoon">詳細はこちら</a>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        こどもまつり2026
+        <small>和歌山大学 大学祭実行委員会</small>
+      </a>
+      <nav class="global-nav">
+        <a href="index.html">開催概要</a>
+        <a href="program.html">企画説明</a>
+        <a href="access.html" class="active">アクセス</a>
+        <a href="apply.html">事前申請</a>
+        <a href="contact.html">お問い合わせ</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="メニュー">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>📍 アクセス</h1>
+    <p>和歌山大学 栄谷キャンパスへのアクセス方法をご案内します</p>
+  </div>
+
+  <!-- 地図とアクセス情報 -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">ACCESS MAP</div>
+        <h2 class="section-title">会場<span>案内</span></h2>
+      </div>
+      <div class="access-layout">
+        <div class="map-wrap">
+          <iframe
+            src="https://www.google.com/maps?q=和歌山大学+和歌山市+栄谷930&output=embed"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            title="和歌山大学 アクセスマップ">
+          </iframe>
+        </div>
+        <div class="access-cards">
+          <div class="access-card">
+            <div class="ac-icon">🏫</div>
+            <div>
+              <div class="ac-label">会場</div>
+              <div class="ac-text">和歌山大学 栄谷キャンパス</div>
+              <div class="ac-note">〒640-8510 和歌山県和歌山市栄谷930</div>
+            </div>
+          </div>
+          <div class="access-card">
+            <div class="ac-icon">🚃</div>
+            <div>
+              <div class="ac-label">電車</div>
+              <div class="ac-text">南海電鉄「和歌山大学前」駅より<br>徒歩 約5分</div>
+              <div class="ac-note">和歌山市駅から約15分</div>
+            </div>
+          </div>
+          <div class="access-card">
+            <div class="ac-icon">🚌</div>
+            <div>
+              <div class="ac-label">バス</div>
+              <div class="ac-text">和歌山バス「和歌山大学」停留所<br>すぐ目の前</div>
+              <div class="ac-note">JR和歌山駅・南海和歌山市駅からバスあり</div>
+            </div>
+          </div>
+          <div class="access-card">
+            <div class="ac-icon">🅿️</div>
+            <div>
+              <div class="ac-label">駐車場</div>
+              <div class="ac-text">当日は駐車場のご利用はできません</div>
+              <div class="ac-note">公共交通機関のご利用をお願いします</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <footer>
+    <div class="footer-logo">こどもまつり2026</div>
+    <p>和歌山大学 大学祭実行委員会<br>〒640-8510 和歌山県和歌山市栄谷930</p>
+    <div class="footer-nav">
+      <a href="index.html">開催概要</a>
+      <a href="program.html">企画説明</a>
+      <a href="access.html">アクセス</a>
+      <a href="apply.html">事前申請</a>
+      <a href="contact.html">お問い合わせ</a>
+    </div>
+    <p class="footer-copy">Copyright &copy; 2026 和歌山大学 大学祭実行委員会 All Rights Reserved.</p>
+  </footer>
+  <script src="common.js"></script>
+</body>
+</html>

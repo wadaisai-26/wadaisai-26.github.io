@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お問い合わせ | こどもまつり2026</title>
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .contact-cards { display: flex; flex-direction: column; gap: 20px; max-width: 640px; margin: 0 auto; }
+    .contact-card {
+      background: var(--cream);
+      border: 3px solid var(--navy2);
+      border-radius: 18px;
+      padding: 28px 28px;
+      box-shadow: 5px 5px 0 var(--navy2);
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .cc-icon { font-size: 2.4rem; flex-shrink: 0; }
+    .cc-label { font-size: 0.72rem; font-weight: 700; color: var(--red); letter-spacing: 0.1em; margin-bottom: 6px; }
+    .cc-value { font-size: 1.05rem; font-weight: 900; color: var(--navy2); margin-bottom: 6px; }
+    .cc-value a { color: var(--navy2); }
+    .cc-note { font-size: 0.82rem; color: #777; line-height: 1.7; }
+    .cc-btn {
+      display: inline-block;
+      margin-top: 12px;
+      background: var(--navy2);
+      color: var(--yellow);
+      font-weight: 900;
+      font-size: 0.9rem;
+      padding: 10px 28px;
+      border-radius: 50px;
+      border: 2px solid var(--navy2);
+      box-shadow: 3px 3px 0 var(--red);
+      transition: transform 0.15s;
+    }
+    .cc-btn:hover { transform: translate(-1px,-1px); }
+
+    .notice-box {
+      background: #fff8e1;
+      border: 3px solid var(--yellow);
+      border-radius: 14px;
+      padding: 20px 24px;
+      box-shadow: 4px 4px 0 #f59e0b;
+      max-width: 640px;
+      margin: 32px auto 0;
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.8;
+    }
+    .notice-box strong { color: var(--navy2); }
+
+    .sns-grid {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .sns-card {
+      background: #fff;
+      border: 3px solid var(--navy2);
+      border-radius: 16px;
+      padding: 20px 32px;
+      text-align: center;
+      box-shadow: 4px 4px 0 var(--navy2);
+      min-width: 160px;
+      transition: transform 0.15s;
+    }
+    .sns-card:hover { transform: translate(-2px,-2px); }
+    .sns-icon { font-size: 2rem; margin-bottom: 8px; }
+    .sns-name { font-size: 0.85rem; font-weight: 700; color: var(--navy2); }
+  </style>
+</head>
+<body>
+
+  <div id="notice-banner" style="display:none">
+    <span class="ntxt">⚠️【重要】</span> 台風接近のため開催状況が変更されました。
+    <a href="index.html#typhoon">詳細はこちら</a>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        こどもまつり2026
+        <small>和歌山大学 大学祭実行委員会</small>
+      </a>
+      <nav class="global-nav">
+        <a href="index.html">開催概要</a>
+        <a href="program.html">企画説明</a>
+        <a href="access.html">アクセス</a>
+        <a href="apply.html">事前申請</a>
+        <a href="contact.html" class="active">お問い合わせ</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="メニュー"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>📬 お問い合わせ</h1>
+    <p>ご不明な点はメール・電話・SNSからお気軽にご連絡ください</p>
+  </div>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">CONTACT</div>
+        <h2 class="section-title">お問い合わせ<span>方法</span></h2>
+      </div>
+
+      <div class="contact-cards">
+        <div class="contact-card">
+          <div class="cc-icon">📧</div>
+          <div>
+            <div class="cc-label">メールアドレス</div>
+            <div class="cc-value">
+              <a href="mailto:26kodoma3yaku@gmail.com">26kodoma3yaku@gmail.com</a>
+            </div>
+            <div class="cc-note">返信まで数日かかる場合があります。<br>件名に「こどもまつり問い合わせ」とご記入ください。</div>
+            <a href="mailto:26kodoma3yaku@gmail.com" class="cc-btn">メールを送る</a>
+          </div>
+        </div>
+
+        <div class="contact-card">
+          <div class="cc-icon">📸</div>
+          <div>
+            <div class="cc-label">Instagram</div>
+            <div class="cc-value">@wadaisaiunion</div>
+            <div class="cc-note">
+              最新情報・台風情報はInstagramでも発信中！<br>
+              DMでのお問い合わせも受け付けています。
+            </div>
+            <a href="https://www.instagram.com/wadaisaiunion/" target="_blank" rel="noopener" class="cc-btn">Instagramを見る</a>
+          </div>
+        </div>
+
+        <div class="contact-card">
+          <div class="cc-icon">🌐</div>
+          <div>
+            <div class="cc-label">公式サイト</div>
+            <div class="cc-value">wadaisaiunion.com</div>
+            <div class="cc-note">和歌山大学大学祭実行委員会の公式サイトです。<br>こどもまつり以外のイベント情報もご覧いただけます。</div>
+            <a href="https://www.wadaisaiunion.com/" target="_blank" rel="noopener" class="cc-btn">公式サイトを見る</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice-box">
+        <strong>⚠️ ご注意</strong><br>
+        ・お問い合わせへの返信は平日のみとなります。<br>
+        ・当日の緊急連絡はInstagramのDMまたはメールにてお願いします。<br>
+        ・個人情報に関するお問い合わせは上記メールアドレスまでお願いします。
+      </div>
+    </div>
+  </section>
+
+  <!-- SNS・公式情報 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">FOLLOW US</div>
+        <h2 class="section-title">SNSで<span>最新情報</span>をチェック</h2>
+      </div>
+      <div class="sns-grid">
+        <a class="sns-card" href="https://www.instagram.com/wadaisaiunion/" target="_blank" rel="noopener">
+          <div class="sns-icon">📸</div>
+          <div class="sns-name">Instagram<br>@wadaisaiunion</div>
+        </a>
+        <a class="sns-card" href="https://www.wadaisaiunion.com/" target="_blank" rel="noopener">
+          <div class="sns-icon">🌐</div>
+          <div class="sns-name">公式サイト<br>wadaisaiunion.com</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">こどもまつり2026</div>
+    <p>和歌山大学 大学祭実行委員会<br>〒640-8510 和歌山県和歌山市栄谷930</p>
+    <div class="footer-nav">
+      <a href="index.html">開催概要</a>
+      <a href="program.html">企画説明</a>
+      <a href="access.html">アクセス</a>
+      <a href="apply.html">事前申請</a>
+      <a href="contact.html">お問い合わせ</a>
+    </div>
+    <p class="footer-copy">Copyright &copy; 2026 和歌山大学 大学祭実行委員会 All Rights Reserved.</p>
+  </footer>
+  <script src="common.js"></script>
+</body>
+</html>

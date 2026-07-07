@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>企画説明 | こどもまつり2026</title>
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    .program-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 28px;
+    }
+    .program-card {
+      background: #fff;
+      border: 3px solid var(--navy2);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 6px 6px 0 var(--navy2);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .program-card:hover { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 var(--navy2); }
+    .ph { padding: 20px 22px; color: #fff; display: flex; align-items: center; gap: 14px; }
+    .program-card:nth-child(1) .ph { background: #e53e3e; }
+    .program-card:nth-child(2) .ph { background: #d97706; }
+    .program-card:nth-child(3) .ph { background: #2b6cb0; }
+    .program-card:nth-child(4) .ph { background: #553c9a; }
+    .program-card:nth-child(5) .ph { background: #2f855a; }
+    .program-card:nth-child(6) .ph { background: #0987a0; }
+    .program-card:nth-child(7) .ph { background: #c05621; }
+    .program-card:nth-child(8) .ph { background: #b7791f; }
+    .program-card:nth-child(9) .ph { background: #b83280; }
+    .pnum {
+      background: rgba(255,255,255,0.25);
+      border: 2px solid rgba(255,255,255,0.6);
+      min-width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 0.95rem; flex-shrink: 0;
+      display: none;
+    }
+    .ph-text {}
+    .ph-section { font-size: 0.68rem; opacity: 0.85; margin-bottom: 2px; letter-spacing: 0.05em; }
+    .ph h3 { font-size: 0.97rem; font-weight: 900; line-height: 1.35; }
+    .pc-img img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .pb { padding: 18px 22px; }
+    .pb p { font-size: 0.88rem; color: #555; line-height: 1.8; }
+    .pb-tags { display: none; }
+    .tag {
+      display: inline-block;
+      background: var(--cream);
+      border: 2px solid var(--navy2);
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      color: var(--navy2);
+    }
+
+    /* 全体企画（待機室）特別表示 */
+    .program-card.special { border-color: var(--red); }
+    .program-card.special .ph { background: linear-gradient(135deg, #b83280, #e53e3e); }
+
+    /* 注意事項 */
+    .notice-box {
+      background: #fff8e1;
+      border: 3px solid var(--yellow);
+      border-radius: 16px;
+      padding: 24px 28px;
+      box-shadow: 4px 4px 0 #f59e0b;
+      margin-top: 48px;
+    }
+    .notice-box h3 { font-weight: 900; color: var(--navy2); margin-bottom: 12px; font-size: 1rem; }
+    .notice-box ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .notice-box li { font-size: 0.88rem; color: #555; padding-left: 1.4em; position: relative; line-height: 1.7; }
+    .notice-box li::before { content: "▸"; color: var(--red); position: absolute; left: 0; font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .program-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .program-card { border-radius: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--navy2); display: flex; flex-direction: column; aspect-ratio: 4/5; }
+      .program-card.special { border-color: var(--navy2) !important; }
+      .ph { padding: 6px 8px; gap: 4px; flex-shrink: 0; }
+      .ph-section { font-size: 0.55rem; margin-bottom: 0; }
+      .ph h3 { display: none; }
+      .pc-img { flex: 1; }
+      .pc-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .pb { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="notice-banner" style="display:none">
+    <span class="ntxt">⚠️【重要】</span> 台風接近のため開催状況が変更されました。
+    <a href="index.html#typhoon">詳細はこちら</a>
+  </div>
+
+  <header>
+    <div class="header-inner">
+      <a href="index.html" class="header-logo">
+        こどもまつり2026
+        <small>和歌山大学 大学祭実行委員会</small>
+      </a>
+      <nav class="global-nav">
+        <a href="index.html">開催概要</a>
+        <a href="program.html" class="active">企画説明</a>
+        <a href="access.html">アクセス</a>
+        <a href="apply.html">事前申請</a>
+        <a href="contact.html">お問い合わせ</a>
+      </nav>
+      <button class="mobile-menu-btn" aria-label="メニュー"><span></span><span></span><span></span></button>
+    </div>
+  </header>
+
+  <div class="page-hero">
+    <h1>🎪 企画説明</h1>
+    <p>大学生が企画する9つのアトラクション！全て無料で楽しめます</p>
+  </div>
+
+  <!-- マップ -->
+  <section class="section" style="padding-bottom:0">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">MAP</div>
+        <h2 class="section-title">開催<span>場所マップ</span></h2>
+      </div>
+      <div id="program-map" style="height:440px;border:3px solid var(--navy2);border-radius:16px;overflow:hidden;box-shadow:6px 6px 0 var(--navy2);isolation:isolate"></div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">ALL PROGRAMS</div>
+        <h2 class="section-title">企画<span>場所紹介</span></h2>
+      </div>
+      <div class="program-grid">
+
+        <div class="program-card" id="prog-1">
+          <div class="ph">
+            <div class="pnum">1</div>
+            <div class="ph-text">
+              <div class="ph-section">🎤 企画ライブ局</div>
+              <h3>にこにこどもまつり！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="festival.jpg" alt=""></div>
+          <div class="pb">
+            <p>大学生によるライブやパフォーマンスで会場を盛り上げよう！一緒に踊ったり歌ったり、みんなで楽しい時間を過ごそう！</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">ステージあり</span></div>
+          </div>
+        </div>
+
+        <div class="program-card" id="prog-2">
+          <div class="ph">
+            <div class="pnum">2</div>
+            <div class="ph-text">
+              <div class="ph-section">🏮 お祭り屋台局</div>
+              <h3>わっしょい！ハチャメチャお祭り屋台！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="yatai.jpg" alt=""></div>
+          <div class="pb">
+            <p>お祭りの屋台気分を味わおう！輪投げやスーパーボールすくいなど、夏祭り定番の遊びが大集合！何ポイント取れるかな？</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋外あり</span></div>
+          </div>
+        </div>
+
+        <div class="program-card" id="prog-3">
+          <div class="ph">
+            <div class="pnum">3</div>
+            <div class="ph-text">
+              <div class="ph-section">⚽ スポーツ局</div>
+              <h3>あつまれ！わちゃわちゃ大運動会！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="sports.jpg" alt=""></div>
+          <div class="pb">
+            <p>ボール投げや運動系のゲームで体を動かそう！思いっきり汗をかいて、スポーツの楽しさを体験しよう！</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋外</span><span class="tag">動きやすい服装で</span></div>
+          </div>
+        </div>
+
+        <div class="program-card" id="prog-4">
+          <div class="ph">
+            <div class="pnum">4</div>
+            <div class="ph-text">
+              <div class="ph-section">🔍 謎解き局</div>
+              <h3>宇宙船から脱出しよう！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="nazotoki.jpg" alt=""></div>
+          <div class="pb">
+            <p>謎を解いて宇宙船から脱出せよ！ヒントを集めながら謎に挑戦しよう。友達と協力して全問クリアを目指せ！</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">整理券あり</span></div>
+          </div>
+        </div>
+
+        <div class="program-card" id="prog-5">
+          <div class="ph">
+            <div class="pnum">5</div>
+            <div class="ph-text">
+              <div class="ph-section">🎈 バルーン局</div>
+              <h3>めざせバルーンマスター！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="balloon.jpg" alt=""></div>
+          <div class="pb">
+            <p>風船を使ったアートに挑戦！大学生のお兄さん・お姉さんと一緒に、カラフルなバルーン作品を作ってみよう！</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">作品持ち帰りOK</span></div>
+          </div>
+        </div>
+
+        <div class="program-card" id="prog-6">
+          <div class="ph">
+            <div class="pnum">6</div>
+            <div class="ph-text">
+              <div class="ph-section">🔬 自由研究局</div>
+              <h3>まほうのしゅわしゅわバスボムを作ろう！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="basbomb.jpg" alt=""></div>
+          <div class="pb">
+            <p>重曹などを使って、入浴剤（バスボム）を手作りしよう！ しゅわしゅわと発泡する不思議を体験しながら、世界に一つだけの作品を完成させよう！</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">作品持ち帰りOK</span></div>
+          </div>
+        </div>
+
+        <div class="program-card" id="prog-7">
+          <div class="ph">
+            <div class="pnum">7</div>
+            <div class="ph-text">
+              <div class="ph-section">🎎 文化体験局</div>
+              <h3>こまを作ろう！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="koma.jpg" alt=""></div>
+          <div class="pb">
+            <p>日本の伝統遊び「こま」を自分でデザインして作ろう！色を塗ったり模様をつけたりして、オリジナルのこまを完成させてね。</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">作品持ち帰りOK</span></div>
+          </div>
+        </div>
+
+        <div class="program-card" id="prog-8">
+          <div class="ph">
+            <div class="pnum">8</div>
+            <div class="ph-text">
+              <div class="ph-section">🎲 テーブルゲーム局</div>
+              <h3>わくわくが止まらないテーブルゲーム！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="tablegame.jpg" alt=""></div>
+          <div class="pb">
+            <p>いろんなテーブルゲームをみんなで楽しもう！友達や大学生と一緒に、頭を使ったゲームで盛り上がろう！</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span></div>
+          </div>
+        </div>
+
+        <div class="program-card special" id="prog-10">
+          <div class="ph" style="background:linear-gradient(135deg,#0987a0,#2b6cb0)">
+            <div class="pnum">📸</div>
+            <div class="ph-text">
+              <div class="ph-section">📷 フォトスポット</div>
+              <h3>顔はめパネルで記念撮影！</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="kaohame.jpg" alt=""></div>
+          <div class="pb">
+            <p>こどもまつりオリジナルの顔はめパネルで記念撮影しよう！家族や友達と一緒に、最高の思い出を残してね。もちろん無料！</p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">無料</span><span class="tag">いつでもOK</span></div>
+          </div>
+        </div>
+
+        <div class="program-card special" id="prog-9">
+          <div class="ph">
+            <div class="pnum">🌟</div>
+            <div class="ph-text">
+              <div class="ph-section">🎨 待機室企画（全体）</div>
+              <h3>みんなのおえかきフォトひろば</h3>
+            </div>
+          </div>
+          <div class="pc-img"><img src="watergame.jpg" alt=""></div>
+          <div class="pb">
+            <p>休憩しながら絵を描いたり、こどもまつりの思い出を写真に残せるフォトスポット！企画の合間にぜひ立ち寄ってね。<br><small style="color:#aaa">※場所：東1号館103教室</small></p>
+            <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">休憩室兼用</span><span class="tag">いつでも参加OK</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="notice-box">
+        <h3>⚠️ 企画参加にあたってのご注意</h3>
+        <ul>
+          <li>いずれの企画も対象は全学年です（未就学児の参加は企画の難易度により、局スタッフが判断します）。</li>
+          <li>保護者の方は原則として企画への参加はできません（見守りはOKです）。</li>
+          <li>一部の企画は整理券が必要です。当日スタッフにお問い合わせください。</li>
+          <li>各企画の受付時間は当日配布のパンフレットをご確認ください。</li>
+          <li>熱中症予防のため、こまめな水分補給をお願いします。水分は各自ご持参ください。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--navy2);text-align:center;color:#fff;padding:64px 24px">
+    <div class="container">
+      <p style="font-size:1.1rem;font-weight:700;margin-bottom:24px;color:var(--yellow)">
+        当日をスムーズに楽しむために、事前申請がおすすめです！
+      </p>
+      <a href="apply.html" class="btn-main">📝 事前申請はこちら</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">こどもまつり2026</div>
+    <p>和歌山大学 大学祭実行委員会<br>〒640-8510 和歌山県和歌山市栄谷930</p>
+    <div class="footer-nav">
+      <a href="index.html">開催概要</a><a href="program.html">企画説明</a>
+      <a href="access.html">アクセス</a><a href="apply.html">事前申請</a>
+      <a href="contact.html">お問い合わせ</a>
+    </div>
+    <p class="footer-copy">Copyright &copy; 2026 和歌山大学 大学祭実行委員会 All Rights Reserved.</p>
+  </footer>
+  <script src="common.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    var isMobile = window.innerWidth <= 768;
+    var map = L.map('program-map', { zoomSnap: 0.25 }).setView([34.266248, 135.152271], 16.75);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // 顔はめパネルピン
+    var kao = L.marker([34.265161, 135.151309], { icon: makePin('#0987a0') }).addTo(map);
+    kao.bindPopup(
+      '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
+      '<div>' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">📷 フォトスポット</div>' +
+        '<a href="#prog-10" style="display:block;background:#0987a0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '</div>'
+    );
+
+    // お祭り屋台ピン
+    var matsuri = L.marker([34.265743, 135.151010], { icon: makePin('#d97706') }).addTo(map);
+    matsuri.bindPopup(
+      '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
+      '<div>' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🏮 お祭り屋台局</div>' +
+        '<a href="#prog-2" style="display:block;background:#d97706;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '</div>'
+    );
+
+    // 体育館ピン（スポーツ局・テーブルゲーム局）
+    var gym = L.marker([34.267470, 135.153384], { icon: makePin('#2b6cb0') }).addTo(map);
+    gym.bindPopup(
+      '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
+      '<div style="font-weight:900;font-size:0.9rem;color:#0f1f3d;margin-bottom:10px;border-bottom:2px solid #eee;padding-bottom:6px">体育館</div>' +
+      '<div style="margin-bottom:8px">' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">⚽ スポーツ局　アリーナ</div>' +
+        '<a href="#prog-3" style="display:block;background:#2b6cb0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎲 テーブルゲーム局　武道場</div>' +
+        '<a href="#prog-8" style="display:block;background:#b7791f;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '</div>'
+    );
+
+    // 企画ライブ局ピン
+    var live = L.marker([34.264780, 135.151465], { icon: makePin('#e53e3e') }).addTo(map);
+    live.bindPopup(
+      '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
+      '<div>' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎤 企画ライブ局</div>' +
+        '<a href="#prog-1" style="display:block;background:#e53e3e;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '</div>'
+    );
+
+    // 大学会館ピン（文化体験局）
+    var kaikan = L.marker([34.264257, 135.1515703], { icon: makePin('#c05621') }).addTo(map);
+    kaikan.bindPopup(
+      '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
+      '<div style="font-weight:900;font-size:0.9rem;color:#0f1f3d;margin-bottom:10px;border-bottom:2px solid #eee;padding-bottom:6px">大学会館</div>' +
+      '<div>' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎎 文化体験局　和室</div>' +
+        '<a href="#prog-7" style="display:block;background:#c05621;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '</div>'
+    );
+
+    // E1棟 合体ピン（謎解き・バルーン・自由研究）
+    var e1marker = L.marker([34.2656, 135.1517748], { icon: makePin('#d41c1c') }).addTo(map);
+
+    e1marker.bindPopup(
+      '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
+      '<div style="font-weight:900;font-size:0.9rem;color:#0f1f3d;margin-bottom:10px;border-bottom:2px solid #eee;padding-bottom:6px">E1棟</div>' +
+      '<div style="margin-bottom:8px">' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🔍 謎解き局　E1-205</div>' +
+        '<a href="#prog-4" style="display:block;background:#553c9a;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '<div style="margin-bottom:8px">' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎈 バルーン局　E1-208・E1-209</div>' +
+        '<a href="#prog-5" style="display:block;background:#2f855a;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '<div style="margin-bottom:8px">' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🔬 自由研究局　E1-305・E1-306</div>' +
+        '<a href="#prog-6" style="display:block;background:#0987a0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎨 待機室企画　E1-103</div>' +
+        '<a href="#prog-9" style="display:block;background:#b83280;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+      '</div>' +
+      '</div>'
+    );
+
+    // スマホは全ピンが見えるよう自動ズーム
+    if (isMobile) {
+      var allLatLngs = [
+        [34.265161, 135.151309],
+        [34.265743, 135.151010],
+        [34.2656,   135.1517748],
+        [34.264257, 135.1515703],
+        [34.264780, 135.151465],
+        [34.267470, 135.153384]
+      ];
+      map.fitBounds(allLatLngs, { padding: [30, 30] });
+    }
+
+    // カード → ピン の対応
+    var cardMarkerMap = {
+      'prog-1': live,
+      'prog-2': matsuri,
+      'prog-3': gym,
+      'prog-4': e1marker,
+      'prog-5': e1marker,
+      'prog-6': e1marker,
+      'prog-7': kaikan,
+      'prog-8': gym,
+      'prog-9': e1marker,
+      'prog-10': kao
+    };
+
+    document.querySelectorAll('.program-card').forEach(function(card) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function() {
+        var marker = cardMarkerMap[card.id];
+        if (!marker) return;
+        document.getElementById('program-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(function() {
+          map.flyTo(marker.getLatLng(), 17.5, { duration: 0.8 });
+          marker.openPopup();
+        }, 400);
+      });
+    });
+
+    function makePin(color) {
+      return L.divIcon({
+        className: '',
+        html: '<div style="width:22px;height:32px;position:relative">' +
+              '<div style="width:22px;height:22px;background:' + color + ';' +
+              'border:2.5px solid rgba(0,0,0,0.45);border-radius:50% 50% 50% 0;' +
+              'transform:rotate(-45deg);position:absolute;top:0;left:0;' +
+              'box-shadow:2px 2px 6px rgba(0,0,0,0.35)"></div>' +
+              '</div>',
+        iconSize: [22, 32],
+        iconAnchor: [11, 32],
+        popupAnchor: [1, -32]
+      });
+    }
+
+  </script>
+</body>
+</html>
