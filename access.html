@@ -49,41 +49,6 @@
     .ac-text { font-size: 0.92rem; font-weight: 700; color: var(--navy2); line-height: 1.6; }
     .ac-note { font-size: 0.8rem; color: #888; margin-top: 4px; }
 
-    /* タイムテーブル */
-    .timetable {
-      width: 100%;
-      border-collapse: collapse;
-      border: 3px solid var(--navy2);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 5px 5px 0 var(--navy2);
-    }
-    .timetable thead th {
-      background: var(--navy2);
-      color: var(--yellow);
-      padding: 12px 16px;
-      font-size: 0.88rem;
-      text-align: center;
-    }
-    .timetable tbody tr { border-bottom: 2px solid #e5e7eb; }
-    .timetable tbody tr:last-child { border-bottom: none; }
-    .timetable tbody td {
-      padding: 12px 16px;
-      font-size: 0.9rem;
-      text-align: center;
-      vertical-align: middle;
-    }
-    .timetable tbody tr:nth-child(even) td { background: #f8fafc; }
-    .time-badge {
-      background: var(--red);
-      color: #fff;
-      font-weight: 700;
-      padding: 4px 14px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      display: inline-block;
-    }
-
     @media (max-width: 768px) {
       .access-layout { grid-template-columns: 1fr; }
       .map-wrap { aspect-ratio: 4/3; }
@@ -170,7 +135,7 @@
             <div>
               <div class="ac-label">駐車場</div>
               <div class="ac-text">当日の駐車場利用は事前申請された方のみ可能です</div>
-              <div class="ac-note">事前申請をされていない場合は公共交通機関をご利用ください</div>
+              <div class="ac-note">事前申請締切：2026年7月31日（金）<br>事前申請をされていない場合は公共交通機関をご利用ください</div>
             </div>
           </div>
         </div>

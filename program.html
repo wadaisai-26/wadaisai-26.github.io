@@ -72,6 +72,71 @@
     /* 全体企画（待機室）特別表示 */
     .program-card.special { border-color: var(--red); }
     .program-card.special .ph { background: linear-gradient(135deg, #b83280, #e53e3e); }
+    .tap-hint { display: none; }
+
+    /* 企画詳細ノート（タイルから出てくる付箋） */
+    .program-modal {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      z-index: 50;
+      background: #fffdf0;
+      border-radius: 16px;
+      border: 2px solid var(--navy2);
+      box-shadow: 5px 5px 0 var(--navy2);
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transform-origin: top center;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .program-modal.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .program-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      line-height: 1;
+      color: #fff;
+      cursor: pointer;
+      z-index: 1;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .program-modal-head { padding: 14px 18px; color: #fff; }
+    .program-modal-section { font-size: 0.75rem; opacity: 0.9; margin-bottom: 4px; letter-spacing: 0.05em; }
+    .program-modal-title { font-size: 1.1rem; font-weight: 900; line-height: 1.4; }
+    .program-modal-body { padding: 16px 18px; }
+    .program-modal-body p { font-size: 0.9rem; color: #555; line-height: 1.8; }
+    .program-modal-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 16px; }
+    .program-modal-times { padding: 0 18px 16px; }
+    .program-modal-times-label { font-size: 0.78rem; font-weight: 900; color: var(--navy2); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+    .program-card .pt { display: none; }
+    #program-modal-schedule { display: flex; flex-direction: column; border: 2px solid var(--navy2); border-radius: 12px; overflow: hidden; background: #fff; }
+    .pt-slot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border-bottom: 1px solid #eee; }
+    .pt-slot:last-child { border-bottom: none; }
+    .pt-slot:nth-child(even) { background: #f7f6f0; }
+    .pt-slot b { font-size: 0.95rem; font-weight: 900; color: var(--navy2); }
+    .pt-slot em { font-style: normal; font-size: 0.72rem; font-weight: 700; color: #b45309; background: #fef3c7; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+    .pt-note { padding: 8px 12px; font-size: 0.72rem; color: #888; background: #f7f6f0; }
+    .program-modal-map-btn {
+      display: block;
+      width: calc(100% - 36px);
+      margin: 0 18px 18px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 0.9rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 3px 3px 0 var(--navy2);
+    }
 
     /* 注意事項 */
     .notice-box {
@@ -88,7 +153,7 @@
     .notice-box li::before { content: "▸"; color: var(--red); position: absolute; left: 0; font-weight: 700; }
 
     @media (max-width: 768px) {
-      .program-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .program-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; position: relative; }
       .program-card { border-radius: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--navy2); display: flex; flex-direction: column; aspect-ratio: 4/5; }
       .program-card.special { border-color: var(--navy2) !important; }
       .ph { padding: 6px 8px; gap: 4px; flex-shrink: 0; }
@@ -97,6 +162,7 @@
       .pc-img { flex: 1; }
       .pc-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
       .pb { display: none; }
+      .tap-hint { display: block; font-size: 0.85rem; font-weight: 700; color: var(--red); margin-top: 10px; }
     }
   </style>
 </head>
@@ -145,6 +211,7 @@
       <div class="section-head">
         <div class="section-label">ALL PROGRAMS</div>
         <h2 class="section-title">企画<span>場所紹介</span></h2>
+        <p class="tap-hint">📱 タップして詳細をチェック！</p>
       </div>
       <div class="program-grid">
 
@@ -161,6 +228,15 @@
             <p>大学生によるライブやパフォーマンスで会場を盛り上げよう！一緒に踊ったり歌ったり、みんなで楽しい時間を過ごそう！</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">ステージあり</span></div>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>①9:10~9:40</b><em>受付9:00~9:10</em></span>
+            <span class="pt-slot"><b>②10:00~10:30</b></span>
+            <span class="pt-slot"><b>③10:40~11:20</b><em>受付10:30~10:40</em></span>
+            <span class="pt-slot"><b>④12:30~13:00</b></span>
+            <span class="pt-slot"><b>⑤13:20~14:00</b><em>受付13:00~13:20</em></span>
+            <span class="pt-slot"><b>⑥14:20~15:00</b></span>
+            <span class="pt-slot"><b>⑦15:20~16:00</b><em>受付15:00~15:20</em></span>
+          </div>
         </div>
 
         <div class="program-card" id="prog-2">
@@ -175,6 +251,10 @@
           <div class="pb">
             <p>お祭りの屋台気分を味わおう！輪投げやスーパーボールすくいなど、夏祭り定番の遊びが大集合！何ポイント取れるかな？</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋外あり</span></div>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>午前 9:00~12:30</b><em>受付終了12:00</em></span>
+            <span class="pt-slot"><b>午後 13:45~16:00</b><em>受付終了15:45</em></span>
           </div>
         </div>
 
@@ -191,6 +271,10 @@
             <p>ボール投げや運動系のゲームで体を動かそう！思いっきり汗をかいて、スポーツの楽しさを体験しよう！</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋外</span><span class="tag">動きやすい服装で</span></div>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>1部 11:00~12:00</b><em>受付10:00~11:00</em></span>
+            <span class="pt-slot"><b>2部 14:00~15:00</b><em>受付13:00~14:00</em></span>
+          </div>
         </div>
 
         <div class="program-card" id="prog-4">
@@ -205,6 +289,10 @@
           <div class="pb">
             <p>謎を解いて宇宙船から脱出せよ！ヒントを集めながら謎に挑戦しよう。友達と協力して全問クリアを目指せ！</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">整理券あり</span></div>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>終日 9:00~16:00</b></span>
+            <div class="pt-note">※混雑時は整理券を配布します</div>
           </div>
         </div>
 
@@ -221,6 +309,10 @@
             <p>風船を使ったアートに挑戦！大学生のお兄さん・お姉さんと一緒に、カラフルなバルーン作品を作ってみよう！</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">作品持ち帰りOK</span></div>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>午前 9:00~12:00</b></span>
+            <span class="pt-slot"><b>午後 13:00~16:00</b></span>
+          </div>
         </div>
 
         <div class="program-card" id="prog-6">
@@ -235,6 +327,16 @@
           <div class="pb">
             <p>重曹などを使って、入浴剤（バスボム）を手作りしよう！ しゅわしゅわと発泡する不思議を体験しながら、世界に一つだけの作品を完成させよう！</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">作品持ち帰りOK</span></div>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>1部 9:30~9:50</b><em>受付9:00~9:25</em></span>
+            <span class="pt-slot"><b>2部 10:00~10:20</b><em>受付9:30~9:55</em></span>
+            <span class="pt-slot"><b>3部 10:30~10:50</b><em>受付10:00~10:25</em></span>
+            <span class="pt-slot"><b>4部 11:00~11:20</b><em>受付10:30~10:55</em></span>
+            <span class="pt-slot"><b>5部 13:30~13:50</b><em>受付13:00~13:25</em></span>
+            <span class="pt-slot"><b>6部 14:00~14:20</b><em>受付13:30~13:55</em></span>
+            <span class="pt-slot"><b>7部 14:30~14:50</b><em>受付14:00~14:25</em></span>
+            <span class="pt-slot"><b>8部 15:00~15:20</b><em>受付14:30~14:55</em></span>
           </div>
         </div>
 
@@ -251,6 +353,14 @@
             <p>日本の伝統遊び「こま」を自分でデザインして作ろう！色を塗ったり模様をつけたりして、オリジナルのこまを完成させてね。</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span><span class="tag">作品持ち帰りOK</span></div>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>1部 9:40~10:20</b><em>受付9:00~9:35</em></span>
+            <span class="pt-slot"><b>2部 10:30~11:10</b><em>受付9:40~10:25</em></span>
+            <span class="pt-slot"><b>3部 11:20~12:00</b><em>受付10:30~11:15</em></span>
+            <span class="pt-slot"><b>4部 13:30~14:10</b><em>受付13:00~13:25</em></span>
+            <span class="pt-slot"><b>5部 14:20~15:00</b><em>受付13:30~14:15</em></span>
+            <span class="pt-slot"><b>6部 15:10~15:50</b><em>受付14:20~15:05</em></span>
+          </div>
         </div>
 
         <div class="program-card" id="prog-8">
@@ -265,6 +375,9 @@
           <div class="pb">
             <p>いろんなテーブルゲームをみんなで楽しもう！友達や大学生と一緒に、頭を使ったゲームで盛り上がろう！</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">屋内</span></div>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>終日 9:00~16:00</b></span>
           </div>
         </div>
 
@@ -281,6 +394,10 @@
             <p>こどもまつりオリジナルの顔はめパネルで記念撮影しよう！家族や友達と一緒に、最高の思い出を残してね。もちろん無料！</p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">無料</span><span class="tag">いつでもOK</span></div>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>午前 9:00~11:40</b></span>
+            <span class="pt-slot"><b>午後 12:30~16:00</b></span>
+          </div>
         </div>
 
         <div class="program-card special" id="prog-9">
@@ -296,6 +413,24 @@
             <p>休憩しながら絵を描いたり、こどもまつりの思い出を写真に残せるフォトスポット！企画の合間にぜひ立ち寄ってね。<br><small style="color:#aaa">※場所：東1号館103教室</small></p>
             <div class="pb-tags"><span class="tag">全学年OK</span><span class="tag">休憩室兼用</span><span class="tag">いつでも参加OK</span></div>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>終日 9:00~16:00</b></span>
+          </div>
+        </div>
+
+        <div class="program-modal" id="program-modal" role="dialog" aria-modal="true" aria-labelledby="program-modal-title">
+          <button class="program-modal-close" id="program-modal-close" aria-label="閉じる">&times;</button>
+          <div class="program-modal-head" id="program-modal-head">
+            <div class="program-modal-section" id="program-modal-section"></div>
+            <div class="program-modal-title" id="program-modal-title"></div>
+          </div>
+          <div class="program-modal-body" id="program-modal-body"></div>
+          <div class="program-modal-tags" id="program-modal-tags"></div>
+          <div class="program-modal-times">
+            <div class="program-modal-times-label">⏰ 受付・開催時間</div>
+            <div class="pt" id="program-modal-schedule"></div>
+          </div>
+          <button class="program-modal-map-btn" id="program-modal-map-btn">📍 この企画の場所をマップで見る</button>
         </div>
 
       </div>
@@ -306,7 +441,7 @@
           <li>いずれの企画も対象は全学年です（未就学児の参加は企画の難易度により、局スタッフが判断します）。</li>
           <li>保護者の方は原則として企画への参加はできません（見守りはOKです）。</li>
           <li>一部の企画は整理券が必要です。当日スタッフにお問い合わせください。</li>
-          <li>各企画の受付時間は当日配布のパンフレットをご確認ください。</li>
+          <li>各企画の受付・開催時間は、各タイルをタップ（クリック）すると詳しく確認できます。</li>
           <li>熱中症予防のため、こまめな水分補給をお願いします。水分は各自ご持参ください。</li>
         </ul>
       </div>
@@ -347,7 +482,7 @@
       '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
       '<div>' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">📷 フォトスポット</div>' +
-        '<a href="#prog-10" style="display:block;background:#0987a0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-10" style="display:block;background:#0987a0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '</div>'
     );
@@ -358,7 +493,7 @@
       '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
       '<div>' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🏮 お祭り屋台局</div>' +
-        '<a href="#prog-2" style="display:block;background:#d97706;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-2" style="display:block;background:#d97706;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '</div>'
     );
@@ -370,11 +505,11 @@
       '<div style="font-weight:900;font-size:0.9rem;color:#0f1f3d;margin-bottom:10px;border-bottom:2px solid #eee;padding-bottom:6px">体育館</div>' +
       '<div style="margin-bottom:8px">' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">⚽ スポーツ局　アリーナ</div>' +
-        '<a href="#prog-3" style="display:block;background:#2b6cb0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-3" style="display:block;background:#2b6cb0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '<div>' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎲 テーブルゲーム局　武道場</div>' +
-        '<a href="#prog-8" style="display:block;background:#b7791f;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-8" style="display:block;background:#b7791f;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '</div>'
     );
@@ -385,7 +520,7 @@
       '<div style="font-family:\'Noto Sans JP\',sans-serif;min-width:210px;padding:4px 2px">' +
       '<div>' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎤 企画ライブ局</div>' +
-        '<a href="#prog-1" style="display:block;background:#e53e3e;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-1" style="display:block;background:#e53e3e;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '</div>'
     );
@@ -397,7 +532,7 @@
       '<div style="font-weight:900;font-size:0.9rem;color:#0f1f3d;margin-bottom:10px;border-bottom:2px solid #eee;padding-bottom:6px">大学会館</div>' +
       '<div>' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎎 文化体験局　和室</div>' +
-        '<a href="#prog-7" style="display:block;background:#c05621;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-7" style="display:block;background:#c05621;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '</div>'
     );
@@ -410,19 +545,19 @@
       '<div style="font-weight:900;font-size:0.9rem;color:#0f1f3d;margin-bottom:10px;border-bottom:2px solid #eee;padding-bottom:6px">E1棟</div>' +
       '<div style="margin-bottom:8px">' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🔍 謎解き局　E1-205</div>' +
-        '<a href="#prog-4" style="display:block;background:#553c9a;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-4" style="display:block;background:#553c9a;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '<div style="margin-bottom:8px">' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎈 バルーン局　E1-208・E1-209</div>' +
-        '<a href="#prog-5" style="display:block;background:#2f855a;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-5" style="display:block;background:#2f855a;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '<div style="margin-bottom:8px">' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🔬 自由研究局　E1-305・E1-306</div>' +
-        '<a href="#prog-6" style="display:block;background:#0987a0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-6" style="display:block;background:#0987a0;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '<div>' +
         '<div style="font-size:0.75rem;color:#555;margin-bottom:4px">🎨 待機室企画　E1-103</div>' +
-        '<a href="#prog-9" style="display:block;background:#b83280;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
+        '<a href="#" class="popup-detail-link" data-prog="prog-9" style="display:block;background:#b83280;color:#fff;text-align:center;padding:5px 14px;border-radius:20px;font-size:0.78rem;font-weight:700;text-decoration:none">詳細を見る →</a>' +
       '</div>' +
       '</div>'
     );
@@ -454,16 +589,107 @@
       'prog-10': kao
     };
 
+    function jumpToMap(card) {
+      var marker = cardMarkerMap[card.id];
+      if (!marker) return;
+      document.getElementById('program-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(function() {
+        map.flyTo(marker.getLatLng(), 17.5, { duration: 0.8 });
+        marker.openPopup();
+      }, 400);
+    }
+
+    var isMobileView = function () { return window.matchMedia('(max-width: 768px)').matches; };
+
+    var pModal = document.getElementById('program-modal');
+    var pModalHead = document.getElementById('program-modal-head');
+    var pModalSection = document.getElementById('program-modal-section');
+    var pModalTitle = document.getElementById('program-modal-title');
+    var pModalBody = document.getElementById('program-modal-body');
+    var pModalTags = document.getElementById('program-modal-tags');
+    var pModalSchedule = document.getElementById('program-modal-schedule');
+    var pModalClose = document.getElementById('program-modal-close');
+    var pModalMapBtn = document.getElementById('program-modal-map-btn');
+    var currentModalCard = null;
+
+    function openProgramModal(card) {
+      var ph = card.querySelector('.ph');
+      var section = card.querySelector('.ph-section');
+      var title = card.querySelector('.ph h3');
+      var body = card.querySelector('.pb');
+      var tags = card.querySelector('.pb-tags');
+      var schedule = card.querySelector('.pt');
+      currentModalCard = card;
+      if (ph) {
+        var phStyle = getComputedStyle(ph);
+        pModalHead.style.backgroundColor = phStyle.backgroundColor;
+        pModalHead.style.backgroundImage = phStyle.backgroundImage;
+      }
+      pModalSection.textContent = section ? section.textContent : '';
+      pModalTitle.textContent = title ? title.textContent : '';
+      var bodyClone = body ? body.cloneNode(true) : null;
+      var tagsInClone = bodyClone ? bodyClone.querySelector('.pb-tags') : null;
+      if (tagsInClone) tagsInClone.remove();
+      pModalBody.innerHTML = bodyClone ? bodyClone.innerHTML : '';
+      pModalTags.innerHTML = tags ? tags.innerHTML : '';
+      pModalSchedule.innerHTML = schedule ? schedule.innerHTML : '';
+
+      var noteHeight = pModal.offsetHeight;
+      var cardRect = card.getBoundingClientRect();
+      var spaceBelow = window.innerHeight - cardRect.bottom;
+      var top;
+      if (noteHeight + 8 <= spaceBelow) {
+        top = card.offsetTop + card.offsetHeight + 8;
+      } else {
+        top = Math.max(0, card.offsetTop - noteHeight - 8);
+      }
+      pModal.style.top = top + 'px';
+      pModal.classList.add('open');
+    }
+
+    function closeProgramModal() {
+      pModal.classList.remove('open');
+    }
+
     document.querySelectorAll('.program-card').forEach(function(card) {
       card.style.cursor = 'pointer';
-      card.addEventListener('click', function() {
-        var marker = cardMarkerMap[card.id];
-        if (!marker) return;
-        document.getElementById('program-map').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(function() {
-          map.flyTo(marker.getLatLng(), 17.5, { duration: 0.8 });
-          marker.openPopup();
-        }, 400);
+      card.addEventListener('click', function(e) {
+        if (isMobileView()) {
+          e.stopPropagation();
+          openProgramModal(card);
+        } else {
+          jumpToMap(card);
+        }
+      });
+    });
+
+    pModal.addEventListener('click', function (e) { e.stopPropagation(); });
+    pModalClose.addEventListener('click', closeProgramModal);
+    pModalMapBtn.addEventListener('click', function () {
+      closeProgramModal();
+      if (currentModalCard) jumpToMap(currentModalCard);
+    });
+    document.addEventListener('click', function () { closeProgramModal(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeProgramModal();
+    });
+
+    // Leafletのポップアップ内クリックはmapまで伝播しないため、ポップアップ自体に処理を仕込む
+    map.on('popupopen', function (e) {
+      var el = e.popup.getElement();
+      if (el._detailBound) return;
+      el._detailBound = true;
+      el.addEventListener('click', function (ev) {
+        var link = ev.target.closest('.popup-detail-link');
+        if (!link) return;
+        ev.preventDefault();
+        var card = document.getElementById(link.dataset.prog);
+        if (!card) return;
+        map.closePopup();
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (isMobileView()) {
+          setTimeout(function () { openProgramModal(card); }, 400);
+        }
       });
     });
 

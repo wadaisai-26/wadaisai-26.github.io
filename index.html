@@ -215,6 +215,55 @@
     .pb p { font-size: 0.88rem; color: #555; line-height: 1.8; }
     .program-card.special { border-color: var(--red); }
     .program-card.special .ph { background: linear-gradient(135deg, #b83280, #e53e3e) !important; }
+    .tap-hint { display: none; }
+    /* 企画詳細ノート（タイルから出てくる付箋） */
+    .program-modal {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      z-index: 50;
+      background: #fffdf0;
+      border-radius: 16px;
+      border: 2px solid var(--navy2);
+      box-shadow: 5px 5px 0 var(--navy2);
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transform-origin: top center;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    .program-modal.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .program-modal-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      line-height: 1;
+      color: #fff;
+      cursor: pointer;
+      z-index: 1;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+    .program-modal-head { padding: 14px 18px; color: #fff; }
+    .program-modal-section { font-size: 0.75rem; opacity: 0.9; margin-bottom: 4px; letter-spacing: 0.05em; }
+    .program-modal-title { font-size: 1.1rem; font-weight: 900; line-height: 1.4; }
+    .program-modal-body { padding: 16px 18px; }
+    .program-modal-body p { font-size: 0.9rem; color: #555; line-height: 1.8; }
+    .program-modal-times { padding: 0 18px 16px; }
+    .program-modal-times-label { font-size: 0.78rem; font-weight: 900; color: var(--navy2); margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+    .program-card .pt { display: none; }
+    #program-modal-schedule { display: flex; flex-direction: column; border: 2px solid var(--navy2); border-radius: 12px; overflow: hidden; background: #fff; }
+    .pt-slot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; border-bottom: 1px solid #eee; }
+    .pt-slot:last-child { border-bottom: none; }
+    .pt-slot:nth-child(even) { background: #f7f6f0; }
+    .pt-slot b { font-size: 0.95rem; font-weight: 900; color: var(--navy2); }
+    .pt-slot em { font-style: normal; font-size: 0.72rem; font-weight: 700; color: #b45309; background: #fef3c7; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+    .pt-note { padding: 8px 12px; font-size: 0.72rem; color: #888; background: #f7f6f0; }
 
     /* 事前申請CTA */
     .apply-cta {
@@ -232,7 +281,7 @@
       .info-value{ font-size:0.82rem; }
       .info-label{ font-size:0.65rem; }
       /* 企画カード スマホ: 3列コンパクト */
-      .program-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .program-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; position: relative; }
       .program-card { border-radius: 10px; border-width: 2px; box-shadow: 2px 2px 0 var(--navy2); display: flex; flex-direction: column; aspect-ratio: 4/5; }
       .program-card.special { border-color: var(--navy2) !important; }
       .ph { padding: 6px 8px; gap: 4px; flex-shrink: 0; }
@@ -241,6 +290,8 @@
       .pc-img { flex: 1; }
       .pc-img img { width: 100%; height: 100%; object-fit: cover; }
       .pb { display: none; }
+      .program-card { cursor: pointer; }
+      .tap-hint { display: block; font-size: 0.85rem; font-weight: 700; color: var(--red); margin-top: 10px; }
     }
   </style>
   <script type="application/ld+json">
@@ -332,10 +383,11 @@
       <div class="info-grid">
         <div class="info-card"><div class="info-icon">📅</div><div class="info-label">開催日時</div><div class="info-value">2026年8月2日（日）<br>開場 8:30<br>終了 16:30</div></div>
         <div class="info-card"><div class="info-icon">📍</div><div class="info-label">会場</div><div class="info-value">和歌山大学<br>栄谷キャンパス</div></div>
-        <div class="info-card"><div class="info-icon">👧</div><div class="info-label">対象</div><div class="info-value">小学生<br>（未就学児は保護者<br>同伴で参加可）</div></div>
+        <div class="info-card"><div class="info-icon">👧</div><div class="info-label">対象</div><div class="info-value">小学生<br>（1〜3年生・未就学児は<br>保護者同伴）</div></div>
         <div class="info-card"><div class="info-icon">💰</div><div class="info-label">参加費</div><div class="info-value">無料</div></div>
         <div class="info-card"><div class="info-icon">🎪</div><div class="info-label">企画数</div><div class="info-value">全9企画<br>同時開催！</div></div>
         <div class="info-card"><div class="info-icon">🎓</div><div class="info-label">主催</div><div class="info-value">和歌山大学<br>大学祭実行委員会</div></div>
+        <div class="info-card"><div class="info-icon">🚭</div><div class="info-label">禁煙</div><div class="info-value">大学構内は<br>全面禁煙です</div></div>
       </div>
 
       <!-- 保護者同伴ルール -->
@@ -360,6 +412,7 @@
         <p style="font-size:0.9rem;color:#666;margin-top:14px;line-height:1.8">
           大学生が企画する全9つのアトラクション！全て無料🌻
         </p>
+        <p class="tap-hint">📱 タップして詳細をチェック！</p>
       </div>
 
       <div class="program-grid">
@@ -375,6 +428,15 @@
           <div class="pb">
             <p>大学生によるライブやパフォーマンスで会場を盛り上げよう！一緒に踊ったり歌ったり、みんなで楽しい時間を過ごそう！</p>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>①9:10~9:40</b><em>受付9:00~9:10</em></span>
+            <span class="pt-slot"><b>②10:00~10:30</b></span>
+            <span class="pt-slot"><b>③10:40~11:20</b><em>受付10:30~10:40</em></span>
+            <span class="pt-slot"><b>④12:30~13:00</b></span>
+            <span class="pt-slot"><b>⑤13:20~14:00</b><em>受付13:00~13:20</em></span>
+            <span class="pt-slot"><b>⑥14:20~15:00</b></span>
+            <span class="pt-slot"><b>⑦15:20~16:00</b><em>受付15:00~15:20</em></span>
+          </div>
         </div>
 
         <div class="program-card">
@@ -387,6 +449,10 @@
           <div class="pc-img"><img src="yatai.jpg" alt="お祭り屋台局"></div>
           <div class="pb">
             <p>お祭りの屋台気分を味わおう！輪投げやスーパーボールすくいなど、夏祭り定番の遊びが大集合！何ポイント取れるかな？</p>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>午前 9:00~12:30</b><em>受付終了12:00</em></span>
+            <span class="pt-slot"><b>午後 13:45~16:00</b><em>受付終了15:45</em></span>
           </div>
         </div>
 
@@ -401,6 +467,10 @@
           <div class="pb">
             <p>ボール投げや運動系のゲームで体を動かそう！思いっきり汗をかいて、スポーツの楽しさを体験しよう！</p>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>1部 11:00~12:00</b><em>受付10:00~11:00</em></span>
+            <span class="pt-slot"><b>2部 14:00~15:00</b><em>受付13:00~14:00</em></span>
+          </div>
         </div>
 
         <div class="program-card">
@@ -413,6 +483,10 @@
           <div class="pc-img"><img src="nazotoki.jpg" alt="謎解き局"></div>
           <div class="pb">
             <p>謎を解いて宇宙船から脱出せよ！ヒントを集めながら謎に挑戦しよう。友達と協力して全問クリアを目指せ！</p>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>終日 9:00~16:00</b></span>
+            <div class="pt-note">※混雑時は整理券を配布します</div>
           </div>
         </div>
 
@@ -427,6 +501,10 @@
           <div class="pb">
             <p>風船を使ったアートに挑戦！大学生のお兄さん・お姉さんと一緒に、カラフルなバルーン作品を作ってみよう！</p>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>午前 9:00~12:00</b></span>
+            <span class="pt-slot"><b>午後 13:00~16:00</b></span>
+          </div>
         </div>
 
         <div class="program-card">
@@ -439,6 +517,16 @@
           <div class="pc-img"><img src="basbomb.jpg" alt="自由研究局"></div>
           <div class="pb">
             <p>重曹などを使って、入浴剤（バスボム）を手作りしよう！しゅわしゅわと発泡する不思議を体験しながら、世界に一つだけの作品を完成させよう！</p>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>1部 9:30~9:50</b><em>受付9:00~9:25</em></span>
+            <span class="pt-slot"><b>2部 10:00~10:20</b><em>受付9:30~9:55</em></span>
+            <span class="pt-slot"><b>3部 10:30~10:50</b><em>受付10:00~10:25</em></span>
+            <span class="pt-slot"><b>4部 11:00~11:20</b><em>受付10:30~10:55</em></span>
+            <span class="pt-slot"><b>5部 13:30~13:50</b><em>受付13:00~13:25</em></span>
+            <span class="pt-slot"><b>6部 14:00~14:20</b><em>受付13:30~13:55</em></span>
+            <span class="pt-slot"><b>7部 14:30~14:50</b><em>受付14:00~14:25</em></span>
+            <span class="pt-slot"><b>8部 15:00~15:20</b><em>受付14:30~14:55</em></span>
           </div>
         </div>
 
@@ -453,6 +541,14 @@
           <div class="pb">
             <p>日本の伝統遊び「こま」を自分でデザインして作ろう！色を塗ったり模様をつけたりして、オリジナルのこまを完成させてね。</p>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>1部 9:40~10:20</b><em>受付9:00~9:35</em></span>
+            <span class="pt-slot"><b>2部 10:30~11:10</b><em>受付9:40~10:25</em></span>
+            <span class="pt-slot"><b>3部 11:20~12:00</b><em>受付10:30~11:15</em></span>
+            <span class="pt-slot"><b>4部 13:30~14:10</b><em>受付13:00~13:25</em></span>
+            <span class="pt-slot"><b>5部 14:20~15:00</b><em>受付13:30~14:15</em></span>
+            <span class="pt-slot"><b>6部 15:10~15:50</b><em>受付14:20~15:05</em></span>
+          </div>
         </div>
 
         <div class="program-card">
@@ -466,6 +562,9 @@
           <div class="pb">
             <p>いろんなテーブルゲームをみんなで楽しもう！友達や大学生と一緒に、頭を使ったゲームで盛り上がろう！</p>
           </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>終日 9:00~16:00</b></span>
+          </div>
         </div>
 
         <div class="program-card special">
@@ -478,6 +577,23 @@
           <div class="pc-img"><img src="kaohame.jpg" alt="フォトスポット"></div>
           <div class="pb">
             <p>こどもまつりオリジナルの顔はめパネルで記念撮影しよう！家族や友達と一緒に、最高の思い出を残してね。もちろん無料！</p>
+          </div>
+          <div class="pt" hidden>
+            <span class="pt-slot"><b>午前 9:00~11:40</b></span>
+            <span class="pt-slot"><b>午後 12:30~16:00</b></span>
+          </div>
+        </div>
+
+        <div class="program-modal" id="program-modal" role="dialog" aria-modal="true" aria-labelledby="program-modal-title">
+          <button class="program-modal-close" id="program-modal-close" aria-label="閉じる">&times;</button>
+          <div class="program-modal-head" id="program-modal-head">
+            <div class="program-modal-section" id="program-modal-section"></div>
+            <div class="program-modal-title" id="program-modal-title"></div>
+          </div>
+          <div class="program-modal-body" id="program-modal-body"></div>
+          <div class="program-modal-times">
+            <div class="program-modal-times-label">⏰ 受付・開催時間</div>
+            <div class="pt" id="program-modal-schedule"></div>
           </div>
         </div>
 
@@ -555,7 +671,7 @@
           <tr>
             <th>最終更新</th>
             <!-- ★ 変更ポイント：更新日時を書き換えてください -->
-            <td>2026年7月1日 12:00</td>
+            <td>2026年7月21日 12:00</td>
           </tr>
           <tr>
             <th>備考</th>
@@ -597,6 +713,10 @@
           <div class="faq-a">水分は各自ご持参ください。昼食は各自ご持参いただくほか、大学内で営業しているキッチンカー「フルール」さんにご協力いただき、チキンカツ弁当を100食限定（1食450円）でご用意いただけることになりました。数量限定ですので、お早めにお越しください。東1号館103教室を休憩・昼食スペースとして開放しています。</div>
         </div>
         <div class="faq-item">
+          <div class="faq-q">当日の持ち物は何が必要ですか？</div>
+          <div class="faq-a">体育館シューズ（体育館・武道場で行う企画に参加する場合）、飲み物、昼ごはんをご持参ください。昼ごはんは持参のほか、当日キッチンカーで100食限定のお弁当も購入いただけます。</div>
+        </div>
+        <div class="faq-item">
           <div class="faq-q">台風・雨の場合はどうなりますか？</div>
           <div class="faq-a">このページの「開催ステータス」欄およびInstagram（@wadaisaiunion）にて前日・当日朝に最新情報をお知らせします。</div>
         </div>
@@ -620,6 +740,7 @@
     </div>
     <p class="footer-copy">Copyright &copy; 2026 和歌山大学 大学祭実行委員会 All Rights Reserved.</p>
   </footer>
+
   <script src="common.js"></script>
 </body>
 </html>
