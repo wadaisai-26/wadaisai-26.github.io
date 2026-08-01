@@ -373,6 +373,28 @@
     </div>
   </section>
 
+  <!-- お弁当販売状況 -->
+  <section class="section" id="bento-status">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-label">LUNCH</div>
+        <h2 class="section-title">お弁当<span>販売状況</span></h2>
+      </div>
+      <div class="typhoon-block">
+        <table class="typhoon-table">
+          <tr><th>商品</th><td>フルールさんのチキンカツ弁当（1食450円・100食限定）</td></tr>
+          <tr>
+            <th>状況</th>
+            <!-- ★ 変更ポイント：販売開始したら status-delay → status-open、文言を「🍱 販売中」に変更 -->
+            <!-- 　　　　　　完売したら status-open → status-cancel、文言を「🍱 完売しました」に変更 -->
+            <td><span class="status-delay">🍱 販売開始前</span></td>
+          </tr>
+          <tr><th>販売開始</th><td>12:10〜（売り切れ次第終了）</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <!-- 開催概要 -->
   <section class="section section-alt">
     <div class="container">
