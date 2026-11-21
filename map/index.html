@@ -66,7 +66,9 @@ main{position:relative;overflow:hidden;min-height:0}
 .view.on{display:block}
 /* map */
 #mapView{background:var(--cm-lawn)}
-#map{width:100%;height:100%;touch-action:none;display:block;cursor:grab;user-select:none}
+#map{position:absolute;left:-30%;top:-30%;width:160%;height:160%;touch-action:none;display:block;cursor:grab;user-select:none;transform-origin:0 0;will-change:transform}
+#mapView{overflow:hidden}
+#pplSvg{position:absolute;left:-30%;top:-30%;width:160%;height:160%;pointer-events:none;transform-origin:0 0;will-change:transform;overflow:hidden}
 #map:active{cursor:grabbing}
 .road{fill:var(--road)} .lawn{fill:var(--lawn)} .bldg{fill:var(--bldg)}
 .bname{fill:var(--bldg-ink);font-family:var(--font-display);font-weight:900;font-size:30px;text-anchor:middle;dominant-baseline:middle;pointer-events:none}
@@ -1024,7 +1026,7 @@ function applyDim(){
 
 // ---- pan / zoom (viewBox) ----
 const FULL={x:140,y:430,w:424,h:860}; const FEST={x:140,y:430,w:424,h:700}; let vb={...FULL};
-function fitTo(F){ const r=svg.getBoundingClientRect(); if(!r.width||!r.height) return;
+function fitTo(F){ const r=mapRect(); if(!r.width||!r.height) return;
   { const lg=document.querySelector(".legend"); const lh=lg&&lg.offsetParent?lg.getBoundingClientRect().height+10:0; // keep content clear of the legend
     if(lh>0&&lh<r.height*.4){ const k=r.height/(r.height-lh); F={x:F.x,y:F.y,w:F.w,h:F.h*k}; } }
   const a=r.width/r.height, ia=F.w/F.h;
@@ -1033,44 +1035,58 @@ function fit(){ fitTo(FULL); }
 const VB_LIM={x:-262,y:70,w:1204,h:1620};
 function clampVB(){ const L=VB_LIM; let k=1; if(vb.w>L.w) k=L.w/vb.w; if(vb.h*k>L.h) k=L.h/vb.h; if(k<1){ const cx=vb.x+vb.w/2, cy=vb.y+vb.h/2; vb.w*=k; vb.h*=k; vb.x=cx-vb.w/2; vb.y=cy-vb.h/2; }
   vb.x=Math.min(Math.max(vb.x,L.x),L.x+L.w-vb.w); vb.y=Math.min(Math.max(vb.y,L.y),L.y+L.h-vb.h); }
-let vbRaf=0; function setVB(){ clampVB(); if(vbRaf) return; vbRaf=requestAnimationFrame(()=>{ vbRaf=0; svg.setAttribute("viewBox",`${vb.x.toFixed(2)} ${vb.y.toFixed(2)} ${vb.w.toFixed(2)} ${vb.h.toFixed(2)}`); forestLOD(); }); }
+let vbRaf=0, gRaf=0, vbC=null;
+const VBM=.3; /* 画面の外側にも少し描いておく割合（指で動かしたとき端が空かないように） */
+function mapRect(){ return (svg.parentElement||svg).getBoundingClientRect(); }
+function vbStr(){ const mx=vb.w*VBM, my=vb.h*VBM; return `${(vb.x-mx).toFixed(2)} ${(vb.y-my).toFixed(2)} ${(vb.w+2*mx).toFixed(2)} ${(vb.h+2*my).toFixed(2)}`; }
+function vbLayers(){ const o=document.getElementById("pplSvg"); return o?[svg,o]:[svg]; }
+function commitVB(){ if(vbRaf){ cancelAnimationFrame(vbRaf); vbRaf=0; } if(gRaf){ cancelAnimationFrame(gRaf); gRaf=0; } clampVB(); const v=vbStr(); vbLayers().forEach(e=>{ e.setAttribute("viewBox",v); e.style.transform=""; }); vbC={...vb}; forestLOD(); }
+function setVB(){ clampVB(); if(vbRaf) return; vbRaf=requestAnimationFrame(()=>{ vbRaf=0; commitVB(); }); }
+/* 指で動かしている間は描いた絵をそのままずらすだけ（離したら描き直す） */
+function gestVB(){ clampVB(); if(!vbC) commitVB();
+  if(gRaf) return; gRaf=requestAnimationFrame(()=>{ gRaf=0; const r=mapRect(); const k=r.width/vb.w, ky=r.height/vb.h, sc=vbC.w/vb.w;
+    const dx=(vbC.x-vb.x)*k, dy=(vbC.y-vb.y)*ky, m=r.width*VBM, n=r.height*VBM;
+    /* 用意した余白をはみ出しそうなら描き直す */
+    if(dx+m*(1-sc)>m*.92||dx+(r.width+m)*(1-sc)<-m*.92||dy+n*(1-sc)>n*.92||dy+(r.height+n)*(1-sc)<-n*.92||sc>2.2){ commitVB(); return; }
+    const t=`translate(${(dx+m*(1-sc)).toFixed(1)}px,${(dy+n*(1-sc)).toFixed(1)}px) scale(${sc.toFixed(4)})`; vbLayers().forEach(e=>e.style.transform=t); }); }
+let wheelT=0;
 function forestLOD(){ const d=document.getElementById("forestDetail"), m=document.getElementById("forestMass"); if(!d||!m) return; d.style.opacity=1; m.style.display="none"; }
 function zoomAt(f,cx,cy){ const nw=Math.min(Math.max(vb.w*f,45),700); const k=nw/vb.w;
   vb.x=cx-(cx-vb.x)*k; vb.y=cy-(cy-vb.y)*k; vb.h*=k; vb.w=nw; setVB(); }
-function toSvg(px,py){ const r=svg.getBoundingClientRect(); return [vb.x+(px-r.left)/r.width*vb.w, vb.y+(py-r.top)/r.height*vb.h]; }
+function toSvg(px,py){ const r=mapRect(); return [vb.x+(px-r.left)/r.width*vb.w, vb.y+(py-r.top)/r.height*vb.h]; }
 const ptrs=new Map(); let moved=false, start=null, pinch=null;
 svg.addEventListener("pointerdown",e=>{ ptrs.set(e.pointerId,[e.clientX,e.clientY]); moved=false; start={x:e.clientX,y:e.clientY,vb:{...vb}};
   if(ptrs.size>=2){ const p=[...ptrs.values()].slice(0,2); const mx=(p[0][0]+p[1][0])/2, my=(p[0][1]+p[1][1])/2;
     pinch={d:Math.max(20,Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1])),vb:{...vb},P:toSvg(mx,my)}; moved=true; } });
 svg.addEventListener("pointermove",e=>{ if(!ptrs.has(e.pointerId)) return; ptrs.set(e.pointerId,[e.clientX,e.clientY]);
-  const r=svg.getBoundingClientRect();
+  const r=mapRect();
   if(ptrs.size>=2&&pinch){ const p=[...ptrs.values()].slice(0,2); const d=Math.max(20,Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]));
     const mx=(p[0][0]+p[1][0])/2, my=(p[0][1]+p[1][1])/2; const b=pinch.vb;
     const nw=Math.min(Math.max(b.w*pinch.d/d,45),700), nh=b.h*nw/b.w;
     // keep the map point that was under the fingers' midpoint under the midpoint
-    vb={w:nw,h:nh,x:pinch.P[0]-(mx-r.left)/r.width*nw,y:pinch.P[1]-(my-r.top)/r.height*nh}; setVB(); moved=true; return; }
+    vb={w:nw,h:nh,x:pinch.P[0]-(mx-r.left)/r.width*nw,y:pinch.P[1]-(my-r.top)/r.height*nh}; gestVB(); moved=true; return; }
   if(ptrs.size>=2) return;
   if(start){ const dx=e.clientX-start.x, dy=e.clientY-start.y; if(Math.abs(dx)+Math.abs(dy)>6){ moved=true;
       if(!svg.hasPointerCapture(e.pointerId)) svg.setPointerCapture(e.pointerId); }
-    if(moved){ vb={...start.vb,x:start.vb.x-dx/r.width*start.vb.w,y:start.vb.y-dy/r.height*start.vb.h}; setVB(); } } });
+    if(moved){ vb={...start.vb,x:start.vb.x-dx/r.width*start.vb.w,y:start.vb.y-dy/r.height*start.vb.h}; gestVB(); } } });
 const up=e=>{ ptrs.delete(e.pointerId); if(ptrs.size<2) pinch=null;
   if(ptrs.size===1){ const [q]=[...ptrs.values()]; start={x:q[0],y:q[1],vb:{...vb}}; } // continue panning from here, no jump
-  if(ptrs.size===0){ start=null; setTimeout(()=>moved=false,0);} };
+  if(ptrs.size===0){ start=null; if(moved||gRaf) commitVB(); setTimeout(()=>moved=false,0);} };
 ["gesturestart","gesturechange","gestureend"].forEach(t=>document.addEventListener(t,ev=>ev.preventDefault(),{passive:false}));
 svg.addEventListener("pointerup",up); svg.addEventListener("pointercancel",up);
-svg.addEventListener("wheel",e=>{ e.preventDefault(); const [cx,cy]=toSvg(e.clientX,e.clientY); zoomAt(e.deltaY>0?1.15:1/1.15,cx,cy); },{passive:false});
+svg.addEventListener("wheel",e=>{ e.preventDefault(); const [cx,cy]=toSvg(e.clientX,e.clientY); const f=e.deltaY>0?1.15:1/1.15; const nw=Math.min(Math.max(vb.w*f,45),700); const k=nw/vb.w; vb.x=cx-(cx-vb.x)*k; vb.y=cy-(cy-vb.y)*k; vb.h*=k; vb.w=nw; gestVB(); clearTimeout(wheelT); wheelT=setTimeout(commitVB,180); },{passive:false});
 const center=()=>[vb.x+vb.w/2,vb.y+vb.h/2];
 document.getElementById("ztod").onclick=()=>{ const order=["auto","day","dusk","night"]; themeMode=order[(order.indexOf(themeMode)+1)%4]; applyTheme(); showToast(themeMode==="auto"?"時間に合わせて自動で切り替えます":themeMode==="day"?"昼の表示":themeMode==="dusk"?"夕方の表示":"夜の表示"); };
 document.getElementById("zin").onclick=()=>zoomAt(1/1.4,...center());
 document.getElementById("zout").onclick=()=>zoomAt(1.4,...center());
 document.getElementById("zfit").onclick=fit;
-function showArea(x0,y0,x1,y1){ const r=svg.getBoundingClientRect(); const a=r.width/r.height; let w=x1-x0,h=y1-y0;
+function showArea(x0,y0,x1,y1){ const r=mapRect(); const a=r.width/r.height; let w=x1-x0,h=y1-y0;
   if(w/h<a) w=h*a; else h=w/a; vb={x:(x0+x1)/2-w/2,y:(y0+y1)/2-h/2,w,h}; setVB(); }
 
 const showFest=()=>fitTo(FEST);
 { const lb=document.getElementById("legbtn"), lg=document.getElementById("legend");
   lb.onclick=()=>{ const open=lg.hidden; lg.hidden=!open; lb.setAttribute("aria-expanded",open); lb.textContent=open?"× 閉じる":"？ 地図の見かた"; }; }
-function focusBooth(n){ const [x,y]=POS[n]; const r=svg.getBoundingClientRect(); const a=r.width/r.height;
+function focusBooth(n){ const [x,y]=POS[n]; const r=mapRect(); const a=r.width/r.height;
   const w=105; vb={w,h:w/a,x:x-w/2,y:y-(w/a)*0.38}; setVB(); }
 
 // ---- sheet ----
@@ -1109,7 +1125,7 @@ document.getElementById("sfav").onclick=()=>{ if(!curShop) return; toggleFav(cur
 let ringEl=null, toastT=null;
 function showToast(t){ const e=document.getElementById("toast"); e.textContent=t; e.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>e.hidden=true,3200); }
 function guideTo(x,y,label,withSheet){ if(location.hash!=="#map"&&location.hash!=="") location.hash="map";
-  setTimeout(()=>{ const r=svg.getBoundingClientRect(); const a=r.width/r.height; const w=95; vb={w,h:w/a,x:x-w/2,y:y-(w/a)*(withSheet?0.28:0.5)}; setVB();
+  setTimeout(()=>{ const r=mapRect(); const a=r.width/r.height; const w=95; vb={w,h:w/a,x:x-w/2,y:y-(w/a)*(withSheet?0.28:0.5)}; setVB();
     if(ringEl) ringEl.remove(); ringEl=el("g",{"pointer-events":"none"}); [0,.55].forEach(d=>{ const c=el("circle",{cx:x,cy:y,r:7,class:"ring",style:`animation-delay:${d}s`},ringEl); });
     setTimeout(()=>{ if(ringEl){ ringEl.remove(); ringEl=null; } },6000); showToast(label); },40); }
 document.getElementById("sguide").onclick=()=>{ if(!curShop) return; const s=curShop; closeSheet(); const [x,y]=POS[s.n]; guideTo(x,y,`ここが ${s.n}番「${s.name.length>14?s.name.slice(0,14)+"…":s.name}」です`); };
@@ -1387,7 +1403,8 @@ function addPeople(){ try{
     if(isl.some(([a,b,w,h])=>x>=a&&x<=a+w&&y>=b&&y<=b+h)) return false;
     return !Object.values(POS).some(([px,py])=>Math.abs(px-x)<7.5&&Math.abs(py-y)<7); };
   let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
-  const g=el("g",{id:"people","pointer-events":"none"}); if(boothLayer) boothLayer.before(g);
+  let ov=document.getElementById("pplSvg"); if(!ov){ ov=document.createElementNS("http://www.w3.org/2000/svg","svg"); ov.id="pplSvg"; ov.setAttribute("aria-hidden","true"); svg.after(ov); } ov.setAttribute("viewBox",svg.getAttribute("viewBox")); ov.style.transform=svg.style.transform;
+  const g=el("g",{id:"people","pointer-events":"none"},ov);
   const SH=["#e8473a","#2f6fd6","#4ad08a","#ff9f43","#8a63d2","#ff5d8f","#3b3f4a","#ffd23f"];
   let made=0, tries=0;
   while(made<16&&tries<400){ tries++;
@@ -1423,7 +1440,7 @@ function applyTheme(){ const t=themeOf(); const ov=document.getElementById("nigh
   document.documentElement.dataset.tod=t;
   const b=document.getElementById("ztod"); if(b) b.textContent=t==="night"?"🌙":t==="dusk"?"🌇":"☀️"; }
 setInterval(applyTheme,60000);
-const _ppl=()=>{ if(document.querySelector("#people>g")) return; if(!svg.getBoundingClientRect().width) return; addPeople(); };
+const _ppl=()=>{ if(document.querySelector("#people>g")) return; if(!mapRect().width) return; addPeople(); };
 setTimeout(_ppl,600); setTimeout(_ppl,2500); addEventListener("hashchange",()=>setTimeout(_ppl,300));
 
 function withLayout2(fn){
