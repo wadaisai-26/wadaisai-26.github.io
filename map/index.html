@@ -1201,7 +1201,7 @@ const tmin=t=>{ const m=t.match(/(\d{1,2}):(\d{2})/); return m?+m[1]*60+ +m[2]:n
 function isNow(time,dayOk){ const n=nowJST(); const fest=n.date===(day===1?"2026-11-21":"2026-11-22"); if(!fest||!dayOk) return false;
   return time.split(/／|\//).some(seg=>{ const p=seg.match(/(\d{1,2}:\d{2})\s*〜\s*(\d{1,2}:\d{2})/); return p&&tmin(p[1])<=n.min&&n.min<tmin(p[2]); }); }
 const placeTxt=e=>e.room.startsWith("E1-")?`東1号館 ${floorOf(e.room)}階 ${e.room}`:e.room.startsWith("W2-")?`西2号館 1階 ${e.room}`:e.room;
-const OUTPOS={o2:()=>[330,757],o3:()=>[296,478],o4:()=>[POS[1][0],POS[1][1]],o5:()=>[MX(300),622]};
+const OUTPOS={o2:()=>{ const o=(window.OUTOFF||{})["センスを見せろ♡♡♡Cuite Strap♡♡♡"]||[0,0]; return [330+o[0],757+o[1]]; },o3:()=>[296,478],o4:()=>[POS[1][0],POS[1][1]],o5:()=>[MX(300),622]};
 function goEvent(e){ const f=floorOf(e.room);
   if(f){ location.hash="events"; setTimeout(()=>{ if(f!==curF) goFloor(f,true); setTimeout(()=>openEv(e),f!==curF?320:0); },30); return; }
   const p=OUTPOS[e.id]; if(p){ const [x,y]=p(); guideTo(x,y,"ここです："+(e.title.length>16?e.title.slice(0,16)+"…":e.title),true); setTimeout(()=>openEv(e),500); } else { location.hash="map"; setTimeout(()=>openEv(e),60); } }
@@ -1919,7 +1919,7 @@ setTimeout(()=>{ renderHome(); renderPlans(); if(document.getElementById("planVi
 </script>
 <script>
 /* 手動配置の調整（編集モードで決めた屋外アイコンのずれ） */
-window.OUTOFF=window.OUTOFF||{};
+window.OUTOFF=window.OUTOFF||{"センスを見せろ♡♡♡Cuite Strap♡♡♡":[-32.69,-29.14]};
 (function(){ const _d=drawOutdoor; drawOutdoor=function(){ _d(); const ok=g=>(g.getAttribute("aria-label")||"").slice(0,24)||("i"+[...g.parentNode.children].indexOf(g));
   [...outLayer.children].forEach(g=>{ const o=OUTOFF[ok(g)]; if(o) g.setAttribute("transform",`translate(${o[0]} ${o[1]}) `+(g.getAttribute("transform")||"")); }); };
   if(Object.keys(OUTOFF).length) drawOutdoor(); })();
