@@ -1917,5 +1917,83 @@ const _drawOutdoor=drawOutdoor; drawOutdoor=function(){ _drawOutdoor(); withLayo
 drawOutdoor();
 setTimeout(()=>{ renderHome(); renderPlans(); if(document.getElementById("planView").classList.contains("on")) renderTT(); },0);
 </script>
+<script>
+/* 手動配置の調整（編集モードで決めた屋外アイコンのずれ） */
+window.OUTOFF=window.OUTOFF||{};
+(function(){ const _d=drawOutdoor; drawOutdoor=function(){ _d(); const ok=g=>(g.getAttribute("aria-label")||"").slice(0,24)||("i"+[...g.parentNode.children].indexOf(g));
+  [...outLayer.children].forEach(g=>{ const o=OUTOFF[ok(g)]; if(o) g.setAttribute("transform",`translate(${o[0]} ${o[1]}) `+(g.getAttribute("transform")||"")); }); };
+  if(Object.keys(OUTOFF).length) drawOutdoor(); })();
+</script>
+<style>
+#edBar{position:fixed;left:8px;right:64px;top:8px;z-index:200;background:#1f2a24;color:#fff;border-radius:14px;padding:8px 10px;font:600 12px/1.45 system-ui;box-shadow:0 6px 20px rgba(0,0,0,.3);display:none}
+#edBar .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+#edBar button{border:0;border-radius:10px;padding:6px 9px;font:700 12px system-ui;background:#fff;color:#1f2a24}
+#edBar button.on{background:#ffd23f}
+#edBar button.red{background:#ff6b6b;color:#fff}
+#edBar #edInfo{color:#ffd23f;margin-top:4px;min-height:1em}
+body.editing #edBar{display:block}
+body.editing .booth,body.editing .outd>g{cursor:grab}
+.edSel{fill:none;stroke:#ff2d6f;stroke-width:.9;stroke-dasharray:2.5 1.5;pointer-events:none}
+.edHnd{fill:#fff;stroke:#ff2d6f;stroke-width:.8;cursor:nwse-resize}
+#edToast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1f2a24;color:#fff;padding:9px 15px;border-radius:12px;font:700 13px system-ui;z-index:210;display:none;max-width:88vw;text-align:center}
+</style>
+<div id="edBar"><div>✏️ 編集中：番号・アイコンをドラッグで移動／番号を選んで□で大きさ変更</div>
+<div id="edInfo"></div>
+<div class="row"><button id="edUndo">↶ 1つ戻す</button><button id="edCopy" class="on">変更をコピー</button><button id="edReset" class="red">全部リセット</button><button id="edExit">終了</button></div></div>
+<div id="edToast"></div>
+<script>
+(function(){
+  if(!/[?&]edit\b/.test(location.search)) return;
+  const KEY="wadai26edit3";
+  let E={pos:{},sz:{},out:{}}; try{ const s=JSON.parse(localStorage.getItem(KEY)||"null"); if(s) E=Object.assign(E,s); }catch(_){}
+  const save=()=>{ try{ localStorage.setItem(KEY,JSON.stringify(E)); }catch(_){} };
+  const toast=t=>{ const e=document.getElementById("edToast"); e.textContent=t; e.style.display="block"; clearTimeout(e._t); e._t=setTimeout(()=>e.style.display="none",2200); };
+  const info=t=>document.getElementById("edInfo").textContent=t||"";
+  const hist=[]; const snap=()=>{ hist.push(JSON.stringify(E)); if(hist.length>80) hist.shift(); };
+  const r2=v=>+(+v).toFixed(2);
+  // 保存済みの編集を反映
+  Object.entries(E.pos).forEach(([n,p])=>{ if(POS[n]) POS[n]=p.slice(); });
+  Object.entries(E.sz).forEach(([n,s])=>{ BOOTH_SZ[n]=s.slice(); });
+  window.OUTOFF=window.OUTOFF||{}; Object.assign(OUTOFF,E.out);
+  document.body.classList.add("editing");
+  if(location.hash!=="#map") location.hash="#map";
+  const redraw=()=>{ try{ drawBooths(); }catch(_){ } };
+  try{ drawOutdoor(); }catch(_){ } redraw();
+  const tp=(cx,cy)=>{ const [x,y]=toSvg(cx,cy); return {x,y}; };
+  let sel=null, box=null, hnd=null;
+  function clearSel(){ sel=null; if(box){box.remove();box=null;} if(hnd){hnd.remove();hnd=null;} info(""); }
+  function boothBB(n){ const s=BOOTH_SZ[n]||[9.4,8.2,0]; const [x,y]=POS[n]; return {x:x-s[0]/2,y:y-s[1]/2,w:s[0],h:s[1]}; }
+  function drawSel(){ if(box){box.remove();box=null;} if(hnd){hnd.remove();hnd=null;} if(!sel) return;
+    if(sel.t==="booth"){ const b=boothBB(sel.n); const s=BOOTH_SZ[sel.n]||[]; box=el("rect",{x:b.x-1,y:b.y-1,width:b.w+2,height:b.h+2,class:"edSel",transform:s[2]?`rotate(${s[2]} ${POS[sel.n][0]} ${POS[sel.n][1]})`:""});
+      hnd=el("rect",{x:b.x+b.w-1.6,y:b.y+b.h-1.6,width:3.6,height:3.6,class:"edHnd"}); info(`${sel.n}番　位置 ${POS[sel.n].map(v=>v.toFixed(1)).join(", ")}　大きさ ${b.w.toFixed(1)}×${b.h.toFixed(1)}`); }
+    else { const bb=sel.g.getBBox(); const m=sel.g.getCTM(), sm=svg.getCTM(); const k=sm.inverse().multiply(m); const p=svg.createSVGPoint(); p.x=bb.x;p.y=bb.y; const a=p.matrixTransform(k); p.x=bb.x+bb.width;p.y=bb.y+bb.height; const c=p.matrixTransform(k);
+      box=el("rect",{x:a.x-1,y:a.y-1,width:c.x-a.x+2,height:c.y-a.y+2,class:"edSel"}); info((sel.g.getAttribute("aria-label")||"アイコン").slice(0,24)); } }
+  const okey=g=>(g.getAttribute("aria-label")||"").slice(0,24)||("i"+[...g.parentNode.children].indexOf(g));
+  let drag=null;
+  svg.addEventListener("pointerdown",e=>{ const t=e.target; let T=null; const P=tp(e.clientX,e.clientY);
+    if(t===hnd&&sel&&sel.t==="booth") T={t:"size",n:sel.n};
+    else { const bg=t.closest&&t.closest(".booth"); const og=t.closest&&t.closest(".outd>g");
+      if(bg) T={t:"booth",n:+bg.dataset.n}; else if(og) T={t:"out",g:og,k:okey(og)}; }
+    if(!T){ clearSel(); return; }
+    e.stopImmediatePropagation(); e.preventDefault(); try{ svg.setPointerCapture(e.pointerId); }catch(_){}
+    snap(); drag={T,P0:P,mv:false};
+    if(T.t==="booth"){ drag.o=POS[T.n].slice(); sel={t:"booth",n:T.n}; }
+    if(T.t==="size"){ drag.o=(BOOTH_SZ[T.n]||[9.4,8.2,0]).slice(); }
+    if(T.t==="out"){ drag.o=(OUTOFF[T.k]||[0,0]).slice(); sel={t:"out",g:T.g}; }
+    drawSel(); },true);
+  svg.addEventListener("pointermove",e=>{ if(!drag) return; e.stopImmediatePropagation(); const P=tp(e.clientX,e.clientY); const dx=P.x-drag.P0.x, dy=P.y-drag.P0.y; if(Math.abs(dx)+Math.abs(dy)>.3) drag.mv=true; const T=drag.T;
+    if(T.t==="booth"){ POS[T.n]=[r2(drag.o[0]+dx),r2(drag.o[1]+dy)]; E.pos[T.n]=POS[T.n].slice(); redraw(); }
+    if(T.t==="size"){ const s=[r2(Math.max(3,drag.o[0]+dx)),r2(Math.max(3,drag.o[1]+dy))]; if(drag.o[2]) s.push(drag.o[2]); BOOTH_SZ[T.n]=s; E.sz[T.n]=s.slice(); redraw(); }
+    if(T.t==="out"){ const v=[r2(drag.o[0]+dx),r2(drag.o[1]+dy)]; OUTOFF[T.k]=v; E.out[T.k]=v; drawOutdoor(); const g=[...outLayer.children].find(g=>okey(g)===T.k); if(g){ T.g=g; sel={t:"out",g}; } }
+    drawSel(); },true);
+  const end=e=>{ if(!drag) return; e.stopImmediatePropagation(); if(drag.mv) save(); else hist.pop(); drag=null; };
+  svg.addEventListener("pointerup",end,true); svg.addEventListener("pointercancel",end,true);
+  svg.addEventListener("click",e=>{ if(e.target.closest&&(e.target.closest(".booth")||e.target.closest(".outd>g"))){ e.stopImmediatePropagation(); e.preventDefault(); } },true);
+  document.getElementById("edUndo").onclick=()=>{ const h=hist.pop(); if(!h){ toast("戻せる変更はありません"); return; } E=JSON.parse(h); save(); location.reload(); };
+  document.getElementById("edReset").onclick=()=>{ if(!confirm("編集した内容を全部消しますか？")) return; localStorage.removeItem(KEY); location.reload(); };
+  document.getElementById("edExit").onclick=()=>{ location.href=location.pathname+"#map"; };
+  document.getElementById("edCopy").onclick=async()=>{ const n=Object.keys(E.pos).length+Object.keys(E.sz).length+Object.keys(E.out).length; if(!n){ toast("まだ何も動かしていません"); return; } const txt="【マップ編集データ】"+JSON.stringify(E); try{ await navigator.clipboard.writeText(txt); toast("コピーしました。チャットに貼り付けて送ってください"); }catch(_){ prompt("これを全部コピーしてチャットに送ってください",txt); } };
+})();
+</script>
 </body>
 </html>
