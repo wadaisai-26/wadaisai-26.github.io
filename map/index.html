@@ -536,6 +536,7 @@ html[data-tod="dusk"] .bunting .bulb{fill:#fff0b0}
 #map g:focus,#map g:focus-visible,#map [tabindex]:focus,#fsvg g:focus,#fsvg [tabindex]:focus{outline:none!important}
 button:focus:not(:focus-visible),a:focus:not(:focus-visible){outline:none}
 #map .booth:focus rect,#map .stg:focus rect{stroke:inherit}
+#evDesc{white-space:pre-line}
 </style>
 </head>
 <body>
@@ -1225,7 +1226,6 @@ function renderPlans(){ const box=document.getElementById("plist"); box.innerHTM
 
   // outdoor
   const outs=EVENTS.filter(e=>!floorOf(e.room)&&evToday(e)).map(e=>({title:(e.status?`【${e.status}】`:"")+e.title,where:e.room,time:e.time,dy:DAYTXT[e.day],img:e.icon?ICON[e.icon]:null,emo:e.gen,now:isNow(e.time,true),go:()=>goEvent(e),_t:e.title+e.group+e.desc,mq:e.mq}));
-  outs.push({title:"チェキ看板（装飾物）",where:SPOTS.cheki.place,time:"いつでも",emo:"📸",go:()=>goSpot("cheki"),_t:"ちぇきかんばん しゃしん"});
   sec("室外企画","メインストリートなど",outs.filter(o=>ok(o._t,"out",o.now,o.mq)));
   // indoor by building
   [["東1号館",e=>/^E1-/.test(e.room)],["西2号館",e=>/^W2-/.test(e.room)],["大学会館",e=>/^大学会館/.test(e.room)]].forEach(([nm,f])=>{
@@ -1286,7 +1286,7 @@ async function loadSheet(){
     const st=(r[9]||"").trim(); set("status",st&&st!=="営業中"?st:undefined); set("note",(r[10]||"").trim()||undefined); });
   if(res[1].status==="fulfilled") res[1].value.forEach(r=>{ const e=EVENTS.find(x=>String(x.id)===String(r[0]).trim()); if(!e) return;
     const set=(k,v)=>{ if(v&&e[k]!==v){ e[k]=v; changed=true; } };
-    set("title",(r[1]||"").trim()); set("group",(r[2]||"").trim()); set("time",(r[4]||"").trim()); set("desc",(r[6]||"").trim());
+    set("title",(r[1]||"").trim()); set("group",(r[2]||"").trim()); set("time",(r[4]||"").trim()); set("desc",(r[6]||"").trim()); if(e.id==="w22"&&!/チェキ看板/.test(e.desc||"")) e.desc=(e.desc||"")+"\n📸 チェキ看板もこの部屋（W2-105）の中にあります。チェキはもちろん、自分のスマホでの記念撮影にもどうぞ！";
     const st=(r[7]||"").trim(); const nv=st&&st!=="通常"?st:undefined; if(e.status!==nv){ e.status=nv; changed=true; } });
   if(res[2].status==="fulfilled"){ const rows=res[2].value.filter(r=>r[4]&&r[2]); if(rows.length){ const T={main:{1:[],2:[]},second:{1:[],2:[]}};
       rows.forEach(r=>{ const d=+String(r[0]).trim(), k=/セカンド/.test(r[1])?"second":"main"; if(d!==1&&d!==2) return; T[k][d].push([`${hhmm(r[2])}〜${hhmm(r[3])}`,r[4].trim()]); });
@@ -1502,7 +1502,7 @@ const EVENTS=[
  {id:"w19",title:"運命の席替え",group:"大学祭実行委員会 新企画局",icon:"sekigae",day:0,time:"10:00〜17:00",room:"W2-102",mq:1,desc:"運命の相手は、くじ引きで決まる♡ 席替えのくじ引きで、あなたの「運命の相手」を決定！誰とマッチングするかは引いてみてからのお楽しみ。学内を探して、運命の相手を見つけに行こう！"},
  {id:"w20",title:"制服プリクラ",group:"大学祭実行委員会 新企画局",icon:"purikura",day:0,time:"10:00〜17:00",room:"W2-103",mq:1,desc:"今日だけ、制服着てみない？制服に着替えてチェキを撮ったら、好きなように落書き！学祭でしかできない特別な1枚を作ろう。"},
  {id:"w21",title:"プレイルーム",group:"大学祭実行委員会 協賛局",icon:"ennichi",day:0,time:"10:00〜17:00",room:"W2-104",mq:1,desc:"祭りといったら縁日は欠かせない！協賛局では老若男女誰でも楽しめる縁日をします！豪華景品盛りだくさんなのでぜひ来てください。"},
- {id:"w22",title:"AMERICAN TABLE GAMES",group:"大学祭実行委員会 広報局",icon:"atg",day:0,time:"10:00〜17:00",room:"W2-105",mq:1,desc:"トランプやサイコロを使ったテーブルゲームが大集合！運とひらめきで勝負をしよう。ゲームを楽しんだあとは、景品をゲットできるチャンスも！フォトスポットではチェキで撮影。あなたはどのゲームから挑戦する？"},
+ {id:"w22",title:"AMERICAN TABLE GAMES",group:"大学祭実行委員会 広報局",icon:"atg",day:0,time:"10:00〜17:00",room:"W2-105",mq:1,desc:"トランプやサイコロを使ったテーブルゲームが大集合！運とひらめきで勝負をしよう。ゲームを楽しんだあとは、景品をゲットできるチャンスも！フォトスポットではチェキで撮影。あなたはどのゲームから挑戦する？\n📸 チェキ看板もこの部屋（W2-105）の中にあります。チェキはもちろん、自分のスマホでの記念撮影にもどうぞ！"},
  {id:"o6",title:"わだいフェスタ2026×「同窓生の集い」",group:"和歌山大学同窓会",icon:null,gen:"同窓会",day:1,time:"11:55〜14:30",room:"E1-101",recept:"11/21 10:30〜",desc:"和歌山大学同窓会 第一回「同窓生の集い」。どなたでも参加いただけます。お申し込みはパンフレットのQRコードから。"},
  {id:"o2",title:"センスを見せろ♡♡♡Cuite Strap♡♡♡",group:"大学祭実行委員会 装飾局",icon:"cuite",day:0,time:"10:00〜17:00",room:"メインストリート",mq:1,desc:"ストラップ、ブレスレットなど土台選びからパーツ選びまで、自分好みにカスタマイズして、お気に入りのものを制作していただけます！お子様向けのビーズや学生から大人に向けた様々なパーツなどを用意しているので、きっと自分の好きなものに仕上げることができるはずです！"},
  {id:"o3",title:"放課後カフェ「タピる」",group:"大学祭実行委員会 新企画局",icon:"tapiru",day:0,time:"10:00〜17:00",room:"GENKI食堂（ふれあい会館）",desc:"あの頃の青春を、もう一度。懐かしのタピオカを、自分の好きな味で楽しもう！いつもとは違う姿の大祭委員が、あなたの1杯をお届けします♡"},
@@ -1898,7 +1898,7 @@ function drawOutdoor(){
     else { el("circle",{cx,cy,r:r-1.6,style:"fill:#fff"},g); const t=el("text",{x:cx,y:cy+.5,class:"opinI",style:"font-size:9px"},g); t.textContent=emoji; }
     tap(g,fn); };
   [["o3",MXinv(296),478,9.5],["o2",MXinv(330),757],["o4",MXinv(POS[1][0]),POS[1][1],5]].forEach(([id,x,y,rr])=>{ const e=evById(id); if(e) ipin(x,y,e.icon?ICON[e.icon]:null,e.gen,e.title,()=>openEv(e),rr); });
-  ipin(409,718,null,"📸","チェキ看板",()=>openSpot("cheki"));
+
   if(day===2){ pin(378,920,"ライブ集合場所","#e5374b",()=>openSpot("live"),null,"🎫"); pin(287,909,"ライブ物販","#e5374b",()=>openSpot("goods"),null,"🛍"); }
 }
 const _drawBooths=drawBooths; drawBooths=function(){ _drawBooths(); drawOutdoor(); if(!document.querySelector("#people>g")) addPeople(); };
