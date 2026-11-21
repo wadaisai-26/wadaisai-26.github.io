@@ -1218,11 +1218,14 @@ const tmin=t=>{ const m=t.match(/(\d{1,2}):(\d{2})/); return m?+m[1]*60+ +m[2]:n
 function isNow(time,dayOk){ const n=nowJST(); const fest=n.date===(day===1?"2026-11-21":"2026-11-22"); if(!fest||!dayOk) return false;
   return time.split(/／|\//).some(seg=>{ const p=seg.match(/(\d{1,2}:\d{2})\s*〜\s*(\d{1,2}:\d{2})/); return p&&tmin(p[1])<=n.min&&n.min<tmin(p[2]); }); }
 const placeTxt=e=>e.room.startsWith("E1-")?`東1号館 ${floorOf(e.room)}階 ${e.room}`:e.room.startsWith("W2-")?`西2号館 1階 ${e.room}`:e.room;
-const OUTPOS={o2:()=>{ const o=(window.OUTOFF||{})["センスを見せろ♡♡♡Cuite Strap♡♡♡"]||[0,0]; return [330+o[0],757+o[1]]; },o3:()=>[296,478],o4:()=>[POS[1][0],POS[1][1]],o5:()=>[MX(300),622]};
+function pinXY(label,fb){ try{ const pg=[...outLayer.children].find(g=>g.getAttribute("aria-label")===label); if(!pg) return fb; const bb=pg.getBBox(), k2=svg.getCTM().inverse().multiply(pg.getCTM()), q=svg.createSVGPoint(); q.x=bb.x+bb.width/2; q.y=bb.y+bb.height*.55; const r=q.matrixTransform(k2); return [r.x,r.y]; }catch(_){ return fb; } }
+const OUTPOS={o2:()=>pinXY("センスを見せろ♡♡♡Cuite Strap♡♡♡",[330,757]),o3:()=>[296,478],o4:()=>[POS[1][0],POS[1][1]],o5:()=>[MX(300),622]};
 function goEvent(e){ const f=floorOf(e.room);
   if(f){ location.hash="events"; setTimeout(()=>{ if(f!==curF) goFloor(f,true); setTimeout(()=>openEv(e),f!==curF?320:0); },30); return; }
   const p=OUTPOS[e.id]; if(p){ const [x,y]=p(); guideTo(x,y,"ここです："+(e.title.length>16?e.title.slice(0,16)+"…":e.title),true); setTimeout(()=>openEv(e),500); } else { location.hash="map"; setTimeout(()=>openEv(e),60); } }
-function goSpot(k){ const P={main:[MX(339),1040],second:[MX(271),816],cheki:[MX(409),718],live:[MX(378),920],goods:[MX(287),909]}[k]; const [x,y]=P; guideTo(x,y,"ここです："+SPOTS[k].title,true); setTimeout(()=>openSpot(k),500); }
+function goSpot(k){ const P={main:[MX(339),1040],second:[MX(271),816],cheki:[MX(409),718],live:[MX(378),920],goods:[MX(287),909]}[k]; const ok={live:"ライブ集合場所",goods:"ライブ物販"}[k]; let x=P[0], y=P[1];
+  const pg=ok&&[...outLayer.children].find(g=>g.getAttribute("aria-label")===ok);
+  if(pg){ const bb=pg.getBBox(), k2=svg.getCTM().inverse().multiply(pg.getCTM()), q=svg.createSVGPoint(); q.x=bb.x+bb.width/2; q.y=bb.y+bb.height*.55; const r=q.matrixTransform(k2); x=r.x; y=r.y; } guideTo(x,y,"ここです："+SPOTS[k].title,true); setTimeout(()=>openSpot(k),500); }
 function pcard(o){ const li=document.createElement("li"); const b=document.createElement("button"); b.className="pcard"+(o.off?" off":"");
   b.innerHTML=`<span class="pi"></span><span><b></b><span class="pm"><span class="where"></span><span class="tm"></span><span class="dy"></span></span><div class="tline"></div></span>`;
   const pi=b.querySelector(".pi"); if(o.img){ const im=document.createElement("img"); im.src=o.img; im.alt=""; pi.appendChild(im); } else pi.textContent=o.emo||"⭐";
@@ -1936,7 +1939,7 @@ setTimeout(()=>{ renderHome(); renderPlans(); if(document.getElementById("planVi
 </script>
 <script>
 /* 手動配置の調整（編集モードで決めた屋外アイコンのずれ） */
-window.OUTOFF=window.OUTOFF||{"センスを見せろ♡♡♡Cuite Strap♡♡♡":[-32.69,-29.14]};
+window.OUTOFF=window.OUTOFF||{"センスを見せろ♡♡♡Cuite Strap♡♡♡":[-32.69,-29.14],"ライブ物販":[6.96,26.39],"ライブ集合場所":[-82.16,39.31]};
 (function(){ const _d=drawOutdoor; drawOutdoor=function(){ _d(); const ok=g=>(g.getAttribute("aria-label")||"").slice(0,24)||("i"+[...g.parentNode.children].indexOf(g));
   [...outLayer.children].forEach(g=>{ const o=OUTOFF[ok(g)]; if(o) g.setAttribute("transform",`translate(${o[0]} ${o[1]}) `+(g.getAttribute("transform")||"")); }); };
   if(Object.keys(OUTOFF).length) drawOutdoor(); })();
