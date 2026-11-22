@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#14181f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>来場者カウント｜和大祭2026</title>
+<style>
+:root{--bg:#14181f;--card:#1f2530;--line:#2c3442;--txt:#f3f5f8;--sub:#9aa4b5;--acc:#ffcf3f;--acc2:#ff5d7a;--ok:#4ad08a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+body{display:flex;flex-direction:column;min-height:100dvh;padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 14px);user-select:none;-webkit-user-select:none}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{font-size:16px;margin:0;font-weight:800;letter-spacing:.02em}
+h1 small{display:block;font-size:11px;color:var(--sub);font-weight:600}
+#net{font-size:11px;font-weight:700;padding:5px 9px;border-radius:99px;background:var(--card);color:var(--sub);white-space:nowrap}
+#net.ok{color:var(--ok)} #net.wait{color:var(--acc)} #net.bad{color:var(--acc2)}
+.places{display:flex;gap:7px;overflow-x:auto;margin:14px -16px 0;padding:0 16px 2px;scrollbar-width:none}
+.places::-webkit-scrollbar{display:none}
+.places button{flex:none;border:1.5px solid var(--line);background:var(--card);color:var(--txt);border-radius:99px;padding:9px 14px;font-family:inherit;font-weight:700;font-size:14px}
+.places button.on{background:var(--acc);border-color:var(--acc);color:#1a1a1a}
+.mine{margin-top:16px;text-align:center}
+.mine .lbl{font-size:12px;color:var(--sub);font-weight:700}
+.mine .num{font-size:64px;font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.mine .pend{font-size:12px;color:var(--acc);height:16px;font-weight:700}
+.tapwrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:240px}
+#tap{width:min(72vw,300px);aspect-ratio:1;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#ffe27a,var(--acc) 55%,#f0a800);color:#1a1a1a;font-family:inherit;font-weight:900;font-size:68px;line-height:1;box-shadow:0 18px 40px rgba(255,190,0,.25),inset 0 -8px 0 rgba(0,0,0,.12);touch-action:manipulation;transition:transform .06s}
+#tap span{display:block;font-size:15px;font-weight:800;margin-top:6px;opacity:.75}
+#tap:active,#tap.hit{transform:scale(.94)}
+.row{display:flex;gap:10px}
+.row button{flex:1;border:0;border-radius:14px;padding:13px 0;font-family:inherit;font-weight:800;font-size:15px;background:var(--card);color:var(--txt)}
+.row button.p5{background:#2a3446}
+.tot{margin-top:14px;background:var(--card);border-radius:16px;padding:12px 14px}
+.tot .h{display:flex;justify-content:space-between;align-items:baseline}
+.tot .h b{font-size:13px;color:var(--sub)}
+.tot .h .all{font-size:30px;font-weight:900;font-variant-numeric:tabular-nums}
+.tot ul{list-style:none;margin:8px 0 0;padding:0}
+.tot li{display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--line);font-size:14px;font-weight:700}
+.tot li span:last-child{font-variant-numeric:tabular-nums}
+.tot .y{font-size:11px;color:var(--sub);margin-top:6px}
+#setup{display:none;margin-top:14px;background:#3a1f28;border-radius:14px;padding:12px;font-size:13px;line-height:1.6}
+#setup input{width:100%;margin-top:6px;padding:10px;border-radius:10px;border:0;font-size:13px}
+#setup button{margin-top:8px;width:100%;padding:10px;border:0;border-radius:10px;background:var(--acc);font-weight:800}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 24px);transform:translateX(-50%);background:#000c;color:#fff;padding:9px 14px;border-radius:12px;font-size:13px;font-weight:700;display:none;z-index:9}
+</style>
+</head>
+<body>
+<header><h1>来場者カウント<small>和歌山大学 大学祭2026</small></h1><div id="net">接続中…</div></header>
+<div class="places" id="places"></div>
+<div class="mine"><div class="lbl" id="mineLbl">この場所の今日の合計</div><div class="num" id="mineNum">0</div><div class="pend" id="pend"></div></div>
+<div class="tapwrap"><button id="tap" aria-label="1人カウント">＋1<span>タップで1人</span></button></div>
+<div class="row"><button id="minus">−1 まちがい</button><button id="plus5" class="p5">＋5 団体</button></div>
+<div class="tot"><div class="h"><b>今日の全体の合計</b><span class="all" id="allNum">0</span></div><ul id="list"></ul><div class="y" id="yday"></div></div>
+<div id="setup">集計先がまだ設定されていません。Apps Script の「ウェブアプリURL」を貼り付けてください。<input id="apiIn" placeholder="https://script.google.com/macros/s/…/exec"><button id="apiSave">保存</button></div>
+<div id="toast"></div>
+<script>
+const DEFAULT_API=""; /* ← 集計先（Apps Script ウェブアプリURL） */
+const PLACES=["大階段下受付","北門前受付","デイリー前本部"];
+const $=id=>document.getElementById(id);
+const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(_){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}};
+const qs=new URLSearchParams(location.search);
+if(qs.get("api")) ls.set("cnt_api",qs.get("api"));
+let API=ls.get("cnt_api",DEFAULT_API)||DEFAULT_API;
+let place=qs.get("p")&&PLACES.includes(qs.get("p"))?qs.get("p"):ls.get("cnt_place",PLACES[0]);
+let pending=ls.get("cnt_pending",{}); /* place -> まだ送れていない数 */
+let server={}, today=null, sending=false;
+const toast=t=>{const e=$("toast");e.textContent=t;e.style.display="block";clearTimeout(e._t);e._t=setTimeout(()=>e.style.display="none",1800)};
+function net(c,t){const e=$("net");e.className=c;e.textContent=t}
+function renderPlaces(){ const w=$("places"); w.innerHTML=""; PLACES.forEach(p=>{ const b=document.createElement("button"); b.textContent=p; if(p===place) b.className="on"; b.onclick=()=>{ place=p; ls.set("cnt_place",p); renderPlaces(); render(); }; w.appendChild(b); }); }
+function render(){
+  const day=(today&&server[today])||{}; const pd=n=>pending[n]||0;
+  const names=[...new Set([...PLACES,...Object.keys(day)])];
+  $("mineLbl").textContent=place+"の今日の合計";
+  $("mineNum").textContent=Math.max(0,(day[place]||0)+pd(place));
+  const tp=Object.values(pending).reduce((a,b)=>a+b,0);
+  $("pend").textContent=tp?`送信待ち ${tp>0?"+":""}${tp}`:"";
+  let all=0; const ul=$("list"); ul.innerHTML="";
+  names.forEach(n=>{ const v=Math.max(0,(day[n]||0)+pd(n)); all+=v; if(!v&&!PLACES.includes(n)) return; const li=document.createElement("li"); li.innerHTML="<span></span><span></span>"; li.children[0].textContent=n; li.children[1].textContent=v.toLocaleString()+" 人"; ul.appendChild(li); });
+  $("allNum").textContent=all.toLocaleString();
+  const ks=Object.keys(server).filter(d=>d!==today).sort();
+  $("yday").textContent=ks.map(d=>`${d.slice(5).replace("-","/")}：${Object.values(server[d]).reduce((a,b)=>a+b,0).toLocaleString()}人`).join("　");
+}
+function add(n){
+  if(!API){ $("setup").style.display="block"; toast("先に集計先の設定が必要です"); return; }
+  pending[place]=(pending[place]||0)+n; ls.set("cnt_pending",pending); render();
+  try{ navigator.vibrate&&navigator.vibrate(n<0?[20,40,20]:15); }catch(_){}
+  const t=$("tap"); if(n>0){ t.classList.add("hit"); setTimeout(()=>t.classList.remove("hit"),70); }
+  clearTimeout(add._t); add._t=setTimeout(flush,700);
+}
+async function call(params){ const u=API+(API.includes("?")?"&":"?")+new URLSearchParams(params)+"&_="+Date.now(); const r=await fetch(u,{redirect:"follow"}); const j=await r.json(); if(!j.ok) throw 0; server=j.days||{}; today=j.today; return j; }
+async function flush(){
+  if(!API||sending) return; const ent=Object.entries(pending).filter(([,v])=>v); if(!ent.length) return;
+  sending=true; net("wait","送信中…");
+  try{ for(const [p,n] of ent){ await call({a:"add",p,n}); pending[p]-=n; if(!pending[p]) delete pending[p]; ls.set("cnt_pending",pending); }
+    net("ok","● 同期済み"); }
+  catch(_){ net("bad","圏外：あとで自動送信"); }
+  sending=false; render(); if(Object.values(pending).some(v=>v)) setTimeout(flush,4000);
+}
+async function pull(){ if(!API||sending) return; try{ await call({a:"get"}); net(Object.values(pending).some(v=>v)?"wait":"ok",Object.values(pending).some(v=>v)?"送信待ち":"● 同期済み"); render(); flush(); }catch(_){ net("bad","つながりません"); } }
+$("tap").addEventListener("click",()=>add(1));
+$("minus").onclick=()=>add(-1); $("plus5").onclick=()=>add(5);
+$("apiSave").onclick=()=>{ const v=$("apiIn").value.trim(); if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(v)){ toast("URLの形が違います"); return; } API=v; ls.set("cnt_api",v); $("setup").style.display="none"; pull(); };
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden) pull(); });
+window.addEventListener("online",flush);
+renderPlaces(); render();
+if(!API){ $("setup").style.display="block"; net("bad","未設定"); } else { pull(); setInterval(pull,8000); }
+</script>
+</body>
+</html>
