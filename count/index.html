@@ -55,13 +55,13 @@ h1 small{display:block;font-size:11px;color:var(--sub);font-weight:600}
 <div id="setup">集計先がまだ設定されていません。Apps Script の「ウェブアプリURL」を貼り付けてください。<input id="apiIn" placeholder="https://script.google.com/macros/s/…/exec"><button id="apiSave">保存</button></div>
 <div id="toast"></div>
 <script>
-const DEFAULT_API=""; /* ← 集計先（Apps Script ウェブアプリURL） */
+const DEFAULT_API="https://script.google.com/macros/s/AKfycbz3UNKy3FU12TRJJtZz_dX61BEh0euaiDKuKJnsrBA3d4c5VaosjJELXOQIShOB71VJ/exec"; /* ← 集計先（Apps Script ウェブアプリURL） */
 const PLACES=["大階段下受付","北門前受付","デイリー前本部"];
 const $=id=>document.getElementById(id);
 const ls={get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(_){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}};
 const qs=new URLSearchParams(location.search);
 if(qs.get("api")) ls.set("cnt_api",qs.get("api"));
-let API=ls.get("cnt_api",DEFAULT_API)||DEFAULT_API;
+let API=qs.get("api")||DEFAULT_API||ls.get("cnt_api","");
 let place=qs.get("p")&&PLACES.includes(qs.get("p"))?qs.get("p"):ls.get("cnt_place",PLACES[0]);
 let pending=ls.get("cnt_pending",{}); /* place -> まだ送れていない数 */
 let server={}, today=null, sending=false;
