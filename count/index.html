@@ -51,7 +51,7 @@ h1 small{display:block;font-size:11px;color:var(--sub);font-weight:600}
 <div class="mine"><div class="lbl" id="mineLbl">この場所の今日の合計</div><div class="num" id="mineNum">0</div><div class="pend" id="pend"></div></div>
 <div class="tapwrap"><button id="tap" aria-label="1人カウント">＋1<span>タップで1人</span></button></div>
 <div class="row"><button id="minus">−1 まちがい</button><button id="plus5" class="p5">＋5 団体</button></div>
-<div class="tot"><div class="h"><b>今日の全体の合計</b><span class="all" id="allNum">0</span></div><ul id="list"></ul><div class="y" id="yday"></div></div>
+<div class="tot"><div class="h"><b>今日の全体の合計</b><span class="all" id="allNum">0</span></div><ul id="list"></ul><div class="y" id="yday"></div><a id="sheetLink" target="_blank" rel="noopener" style="display:none;font-size:11px;color:#9aa4b5;margin-top:6px">集計のスプレッドシートを開く（作った人のみ）</a></div>
 <div id="setup">集計先がまだ設定されていません。Apps Script の「ウェブアプリURL」を貼り付けてください。<input id="apiIn" placeholder="https://script.google.com/macros/s/…/exec"><button id="apiSave">保存</button></div>
 <div id="toast"></div>
 <script>
@@ -88,7 +88,7 @@ function add(n){
   const t=$("tap"); if(n>0){ t.classList.add("hit"); setTimeout(()=>t.classList.remove("hit"),70); }
   clearTimeout(add._t); add._t=setTimeout(flush,700);
 }
-async function call(params){ const u=API+(API.includes("?")?"&":"?")+new URLSearchParams(params)+"&_="+Date.now(); const r=await fetch(u,{redirect:"follow"}); const j=await r.json(); if(!j.ok) throw 0; server=j.days||{}; today=j.today; return j; }
+async function call(params){ const u=API+(API.includes("?")?"&":"?")+new URLSearchParams(params)+"&_="+Date.now(); const r=await fetch(u,{redirect:"follow"}); const j=await r.json(); if(!j.ok) throw 0; server=j.days||{}; today=j.today; if(j.sheet){ const a=$("sheetLink"); a.href=j.sheet; a.style.display="block"; } return j; }
 async function flush(){
   if(!API||sending) return; const ent=Object.entries(pending).filter(([,v])=>v); if(!ent.length) return;
   sending=true; net("wait","送信中…");
